@@ -86,13 +86,22 @@
 				rangeSelector: {
 					selected: 1
 				},
+				legend: {
+					enabled: true,
+					align: 'right',
+					verticalAlign: 'top',
+					y: 150,
+					borderWidth: 2,
+					layout: 'vertical',
+					itemMarginBottom: 10,
+				},
 				series: [
 				{
-					name: 'PSI Reading',
+					name: 'PSI 3-hr Reading',
 					data: <?php echo $psi_3hr_str; ?>
 				},
 				{
-					name: 'PSI 24 hour Reading',
+					name: 'PSI 24 hour Range',
 					type: 'columnrange',
 					data: <?php echo $psi_24hr_str; ?>
 				}
