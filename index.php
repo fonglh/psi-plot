@@ -1,5 +1,6 @@
 <html>
 	<head>
+	<?php include_once("analyticstracking.php") ?>
 		<title>Singapore PSI Readings</title>
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
 		<script src="highstock.js"></script>
@@ -60,7 +61,6 @@
 	</head>
 
 	<body>
-	<?php include_once("analyticstracking.php") ?>
 		<div id="container" style="width:80%; height:400px; margin-left:auto; margin-right:auto;"></div>
 	</body>
 </html>
