@@ -60,6 +60,7 @@
 	</head>
 
 	<body>
+	<?php include_once("analyticstracking.php") ?>
 		<div id="container" style="width:80%; height:400px; margin-left:auto; margin-right:auto;"></div>
 	</body>
 </html>
