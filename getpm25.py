@@ -33,6 +33,14 @@ start_time_pos = psihtml.find('<h1 id="psi24">')
 end_time_pos = psihtml.find('</select>', start_time_pos)
 psihtml = psihtml[ start_time_pos:end_time_pos ]
 
+#get current day to check if the site has been updated just past midnight
+day = re.findall(r'24-hr PSI Readings on ([0-9]+) [A-Za-z]{3} \d{4}', psihtml)
+day = int(day[0])
+
+#quit as reading is not in yet
+if day != currdt.day:
+	exit(0)
+
 # get all the available times
 times = re.findall(r'<option.*value="([0-9]{4})">', psihtml)
 
