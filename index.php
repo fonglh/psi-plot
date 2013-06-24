@@ -175,6 +175,26 @@
 					selected: 2
 				},
 
+				yAxis: {
+					title: {
+						text: 'PSI'
+					},
+
+					plotBands: [{
+						from: 51,
+						to: 100,
+						color: 'rgba(145, 255, 0, 0.5)',
+						label: { text: 'Moderate' }
+					},
+					{
+						from: 201,
+						to: 300,
+						color: 'rgba(255, 145, 0, 0.8)',
+						label: { text: 'Very unhealthy' }
+					}]
+
+				},
+
 				series: [
 				{
 					name: 'PSI 3-hr Reading',
@@ -204,18 +224,6 @@
 					title: {
 						text: 'Concentration'
 					},
-					plotBands: [{
-						from: 51,
-						to: 100,
-						color: 'rgba(145, 255, 0, 0.5)',
-						label: { text: 'Moderate' }
-					},
-					{
-						from: 201,
-						to: 300,
-						color: 'rgba(255, 145, 0, 0.8)',
-						label: { text: 'Very unhealthy' }
-					}]
 				},
 
 				rangeSelector: {
