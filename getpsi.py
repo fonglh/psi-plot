@@ -26,6 +26,17 @@ collection = db.psi_readings
 f = urllib.urlopen("http://app2.nea.gov.sg/anti-pollution-radiation-protection/air-pollution/psi/past-24-psi-readings")
 psihtml = f.read()
 
+# get current day to check if the site has been updated just past midnight
+start_day = psihtml.find('<h1 id="psi24">')
+psihtml = psihtml[ start_day: ]
+end_day = psihtml.find('</h1>')
+day = re.findall(r'24-hr PSI Readings on ([0-9]+) [A-Za-z]{3} \d{4}', psihtml[:end_day])
+day = int(day[0])
+
+# quit as reading is not in yet
+if day != currdt.day:
+	exit(0)
+
 #find start of PSI reading table
 start_psi = psihtml.find("<h1>3-hr PSI Readings from 12AM to 11.59PM on")
 psihtml = psihtml[start_psi:]
