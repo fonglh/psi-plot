@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 	<head>
-	<?php include_once("analyticstracking.php") ?>
 		<title>Singapore PSI Readings</title>
 		<link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
@@ -127,6 +126,7 @@
 	<body>
 		<div id="container" style="width:80%; height:400px; margin-left:auto; margin-right:auto;"></div>
 	</body>
+	<?php include_once("analyticstracking.php") ?>
 </html>
 
 
