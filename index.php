@@ -1,10 +1,13 @@
+<!DOCTYPE html>
 <html>
 	<head>
 	<?php include_once("analyticstracking.php") ?>
 		<title>Singapore PSI Readings</title>
+		<link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
 		<script src="highstock.js"></script>
 		<script src="highcharts-more.js"></script>
+		<script src="js/bootstrap.min.js"></script>
 
 		<?php
 
@@ -16,6 +19,7 @@
 			$dbpass = 'aNqL6bA5';
 
 			$db = new MongoClient("mongodb://$dbuser:$dbpass@$dbhost/$dbname");
+			//$db = new MongoClient("mongodb://$dbhost/$dbname");
 			$c_readings = $db -> selectCollection( $dbname, "psi_readings" );
 
 			// get 3 hour PSI readings
