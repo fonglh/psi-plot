@@ -184,31 +184,31 @@
 					{
 						from: 0,
 						to: 50,
-						color: 'rgba(0, 255, 0, 0.8)',
+						color: 'rgba(0, 255, 0, 0.7)',
 						label: { text: 'Good' }
 					},
 					{
 						from: 51,
 						to: 100,
-						color: 'rgba(128, 255, 0, 0.8)',
+						color: 'rgba(128, 255, 0, 0.7)',
 						label: { text: 'Moderate' }
 					},
 					{
 						from: 101,
 						to: 200,
-						color: 'rgba(255, 255, 0, 0.8)',
+						color: 'rgba(255, 255, 0, 0.7)',
 						label: { text: 'Unhealthy' }
 					},
 					{
 						from: 201,
 						to: 300,
-						color: 'rgba(255, 128, 0, 0.8)',
+						color: 'rgba(255, 128, 0, 0.7)',
 						label: { text: 'Very unhealthy' }
 					},
 					{
 						from: 301,
 						to: 500,
-						color: 'rgba(255, 0, 0, 0.8)',
+						color: 'rgba(255, 0, 0, 0.7)',
 						label: { text: 'Hazardous' }
 					}
 					]
