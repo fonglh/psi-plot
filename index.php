@@ -17,8 +17,16 @@
 			$dbuser = 'psiuser';
 			$dbpass = 'aNqL6bA5';
 
-			$db = new MongoClient("mongodb://$dbuser:$dbpass@$dbhost/$dbname");
-			//$db = new MongoClient("mongodb://$dbhost/$dbname");
+			try 
+			{
+				$db = new MongoClient("mongodb://$dbuser:$dbpass@$dbhost/$dbname");
+			}
+			catch ( MongoConnectionException $e )
+			{
+				// try no auth
+				$db = new MongoClient("mongodb://$dbhost/$dbname");
+			}
+
 			$c_readings = $db -> selectCollection( $dbname, "psi_readings" );
 
 			// get 3 hour PSI readings
