@@ -17,6 +17,15 @@ class GMT8(tzinfo):
 	def tzname(self,dt):
 		return "GMT +8"
 
+#constant array indices for region
+NORTH = 0
+SOUTH = 1
+EAST = 2
+WEST = 3
+CENTRAL = 4
+
+psi24_table = [[0 for x in xrange(24)] for x in xrange(5)]
+
 currdt = datetime.now(tz=GMT8())
 dtnow = datetime.now(tz=GMT8())
 
@@ -29,24 +38,54 @@ except PyMongoError:
 	pass
 collection = db.psi_24hr_pm25
 
-f = urllib.urlopen("http://app2.nea.gov.sg/anti-pollution-radiation-protection/air-pollution/psi/past-24-hour-psi-readings/")
+f = urllib.urlopen("http://app2.nea.gov.sg/anti-pollution-radiation-protection/air-pollution/psi/psi-readings-over-the-last-24-hours")
 psihtml = f.read()
 
-# find times available by checking the dropdown box
-start_time_pos = psihtml.find('<h1 id="psi24">')
-end_time_pos = psihtml.find('</select>', start_time_pos)
-psihtml = psihtml[ start_time_pos:end_time_pos ]
+# find start of 24 hour PSI table
+start_psi = psihtml.find("<h1>24-hr PSI Readings from 12AM to 11.59PM on")
+psihtml = psihtml[start_psi:]
 
-#get current day to check if the site has been updated just past midnight
-day = re.findall(r'24-hr PSI Readings on ([0-9]+) [A-Za-z]{3} \d{4}', psihtml)
+#get current day of 24 hour PSI readings
+end_day = psihtml.find('</h1>')
+
+# dd MMM yyyy format
+day = re.findall(r'([0-9]+) [A-Za-z]{3} \d{4}', psihtml[:end_day])
 day = int(day[0])
 
-#quit as reading is not in yet
+# quit as reading is not in yet
 if day != dtnow.day:
 	exit(0)
 
-# get all the available times
-times = re.findall(r'<option.*value="([0-9]{4})">', psihtml)
+# extract table of 24 hour PSI readings (1st 12 hours)
+start_psi = psihtml.find("<strong>North</strong>")
+end_psi = psihtml.find("<strong>Overall Singapore</strong>", start_psi)
+psi24hr = psihtml[start_psi:end_psi]
+
+
+#get 24 hour PSI values, including the blank ones, for 1st 12 hours
+psi24_readings = re.findall(r'[\s>]([0-9-]{1,3})[\s<]', psi24hr)
+
+ctr = 0
+for reading in psi24_readings:
+	psi24_table[ctr/12][ctr%12] = reading
+	ctr += 1
+
+# extract table of 24 hour PSI readings (2nd 12 hours)
+start_psi = psihtml.find("<strong>North</strong>", end_psi)
+end_psi = psihtml.find("<strong>Overall Singapore</strong>", start_psi)
+psi24hr = psihtml[start_psi:end_psi]
+
+#get 24 hour PSI values, including the blank ones, for 1st 12 hours
+psi24_readings = re.findall(r'[\s>]([0-9-]{1,3})[\s<]', psi24hr)
+
+ctr = 0
+for reading in psi24_readings:
+	psi24_table[ctr/12][ctr%12 + 12] = reading
+	ctr += 1
+
+print psi24_table
+exit(0)
+
 
 for value in times:
 	hr = int(value)/100
