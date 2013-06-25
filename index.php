@@ -189,6 +189,10 @@
 					selected: 2
 				},
 
+				xAxis: {
+					ordinal: false
+				},
+
 				yAxis: {
 					title: {
 						text: 'PSI'
@@ -260,6 +264,10 @@
 					verticalAlign: 'bottom',
 					borderWidth: 2,
 					itemMarginBottom: 10,
+				},
+
+				xAxis: {
+					ordinal: false
 				},
 
 				yAxis: {
