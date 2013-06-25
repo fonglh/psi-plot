@@ -5,6 +5,7 @@
 import urllib
 import re
 from pymongo import MongoClient
+from pymongo.errors import PyMongoError
 from datetime import datetime, tzinfo, timedelta
 import time
 
@@ -22,7 +23,10 @@ dtnow = datetime.now(tz=GMT8())
 #get database
 client = MongoClient()
 db = client.psi_db
-db.authenticate("psiuser", "aNqL6bA5")
+try:
+	db.authenticate("psiuser", "aNqL6bA5")
+except PyMongoError:
+	pass
 collection = db.psi_24hr_pm25
 
 f = urllib.urlopen("http://app2.nea.gov.sg/anti-pollution-radiation-protection/air-pollution/psi/past-24-hour-psi-readings/")
