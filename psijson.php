@@ -37,9 +37,95 @@ if ( $query === 'psi3hr-all' )
 
 	while ( $psi_reading = $cursor -> getNext() )
 	{
-		$psi_3hr_arr[] = array( intval($psi_reading[ 'timestamp'] . "000"), intval($psi_reading[ 'psi' ]) );
+		$psi_3hr_arr[] = array( floatval($psi_reading[ 'timestamp' ] . "000"), intval($psi_reading[ 'psi' ]) );
 	}
 	$json = json_encode( $psi_3hr_arr );
+}
+else if ( $query === 'psi3hr-last' )
+{
+	$c_readings = $db -> selectCollection( $dbname, "psi_readings" );
+
+	// get all 3 hour PSI readings, and limit to the latest one
+	$cursor = $c_readings->find();
+	$cursor->sort( array('timestamp' => -1) );
+	$cursor->limit(1);
+
+	$psi_reading = $cursor -> getNext();
+	$psi_3hr_last = array( floatval($psi_reading[ 'timestamp' ] . "000"), intval($psi_reading[ 'psi' ]) );
+
+	$json = json_encode( $psi_3hr_last );
+}
+else if ( $query === 'psi24hr-all' )
+{
+	//get 24 hour PSI readings
+	$c_readings = $db -> selectCollection( $dbname, "psi_24hr_pm25" );
+	
+	$aggregate_ops = array(
+			array(
+				'$group' => array(
+					"_id" => '$timestamp',
+					"min" => array('$min'=>'$psi_24'),
+					"max" => array('$max'=>'$psi_24')
+					)
+				),
+			array(
+				'$project' => array(
+					"timestamp" => '$_id',
+					'_id' => 0,
+					"min" => 1,
+					"max" => 1,
+					)
+				),
+			array(
+				'$sort' => array(
+					'timestamp' => 1
+					)
+				)
+			);
+	
+	$psi_24hr_data = $c_readings -> aggregate( $aggregate_ops );
+	$psi_24hr_data = $psi_24hr_data[ 'result' ];
+
+	foreach ( $psi_24hr_data as &$psi_reading )
+	{
+		// javascript timestamps are in milliseconds so the values need to be multipled by 1000
+		$psi_24hr_arr[] = array( floatval($psi_reading[ 'timestamp' ] . "000"), intval($psi_reading[ 'min' ]), intval($psi_reading[ 'max' ]) );
+	}
+	$json = json_encode( $psi_24hr_arr );
+}
+else if ( $query === 'psi24hr-last' )
+{
+	//get 24 hour PSI readings
+	$c_readings = $db -> selectCollection( $dbname, "psi_24hr_pm25" );
+	
+	$aggregate_ops = array(
+			array(
+				'$group' => array(
+					"_id" => '$timestamp',
+					"min" => array('$min'=>'$psi_24'),
+					"max" => array('$max'=>'$psi_24')
+					)
+				),
+			array(
+				'$project' => array(
+					"timestamp" => '$_id',
+					'_id' => 0,
+					"min" => 1,
+					"max" => 1,
+					)
+				),
+			array(
+				'$sort' => array(
+					'timestamp' => 1
+					)
+				)
+			);
+	
+	$psi_24hr_data = $c_readings -> aggregate( $aggregate_ops );
+	$psi_24hr_data = $psi_24hr_data[ 'result' ];
+	$psi_24hr_last = array_pop( $psi_24hr_data );
+	$psi_24hr_last_arr = array( floatval($psi_24hr_last[ 'timestamp' ] . "000"), intval($psi_24hr_last[ 'min' ]), intval($psi_24hr_last[ 'max' ]) );
+	$json = json_encode( $psi_24hr_last_arr );
 }
 
 header( 'Content-Type: text/javascript' );
@@ -47,46 +133,6 @@ echo "$callback($json);";
 
 die;
 
-//get 24 hour PSI readings
-$c_readings = $db -> selectCollection( $dbname, "psi_24hr_pm25" );
-$aggregate_ops = array(
-		array(
-			'$group' => array(
-				"_id" => '$timestamp',
-				"min" => array('$min'=>'$psi_24'),
-				"max" => array('$max'=>'$psi_24')
-				)
-			),
-		array(
-			'$project' => array(
-				"timestamp" => '$_id',
-				'_id' => 0,
-				"min" => 1,
-				"max" => 1,
-				)
-			),
-		array(
-			'$sort' => array(
-				'timestamp' => 1
-				)
-			)
-		);
-
-		$psi_24hr_data = $c_readings -> aggregate( $aggregate_ops );
-		$psi_24hr_data = $psi_24hr_data[ 'result' ];
-
-		$psi_24hr_str = "[";
-
-foreach ( $psi_24hr_data as &$psi_reading )
-{
-
-	// javascript timestamps are in milliseconds so the values need to be multipled by 1000
-	$psi_24hr_str .= "[" . $psi_reading[ 'timestamp' ] . "000, " . $psi_reading[ 'min' ] . ", " . $psi_reading[ 'max' ] . "], ";
-}
-
-//replace final ", " with "]"
-$psi_24hr_str = substr( $psi_24hr_str, 0, strlen( $psi_24hr_str ) - 2 );
-$psi_24hr_str .= "]"; 
 
 //get PM2.5 readings
 $aggregate_ops = array(
