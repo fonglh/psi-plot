@@ -2,7 +2,9 @@
 <html>
 	<head>
 		<title>Singapore PSI Readings</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+		<link href="css/bootstrap-responsive.css" rel="stylesheet">
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
 		<script src="highstock.js"></script>
 		<script src="highcharts-more.js"></script>
@@ -39,6 +41,9 @@
 			{
 				// javascript timestamps are in milliseconds so the values need to be multipled by 1000
 				$psi_3hr_str .= "[" . $psi_reading[ 'timestamp' ] . "000, " . $psi_reading[ 'psi' ] . "], ";
+
+				//used later to get the most recent reading
+				$curr_3hr_psi = $psi_reading[ 'psi' ];
 			}
 
 			//replace final ", " with "]"
@@ -119,6 +124,9 @@
 
 				// javascript timestamps are in milliseconds so the values need to be multipled by 1000
 				$pm25_str .= "[" . $psi_reading[ 'timestamp' ] . "000, " . $psi_reading[ 'min' ] . ", " . $psi_reading[ 'max' ] . "], ";
+
+				// used later for current value display
+				$curr_pm25 = $psi_reading[ 'min' ] . "-" . $psi_reading[ 'max' ];
 			}
 
 			//replace final ", " with "]"
@@ -150,11 +158,9 @@
 
 				legend: {
 					enabled: true,
-					align: 'right',
-					verticalAlign: 'top',
-					y: 150,
+					align: 'center',
+					verticalAlign: 'bottom',
 					borderWidth: 2,
-					layout: 'vertical',
 					itemMarginBottom: 10,
 				},
 
@@ -245,12 +251,21 @@
 				},
 
 				title: {
-					text: '24-hr PM2.5 Concentration (ug/m^3)'
+					text: '24-hr PM2.5 Concentration',
+				},
+
+				legend: {
+					enabled: true,
+					align: 'center',
+					verticalAlign: 'bottom',
+					borderWidth: 2,
+					itemMarginBottom: 10,
 				},
 
 				yAxis: {
 					title: {
-						text: 'Concentration'
+						text: 'Concentration (&micro;g/m<sup>3</sup>)',
+						useHTML: true
 					},
 				},
 
@@ -296,8 +311,20 @@
 	</head>
 
 	<body>
-		<div id="psi_container" style="width:80%; height:400px; margin-left:auto; margin-right:auto;"></div>
-		<div id="pm25_container" style="width:80%; height:400px; margin-left:auto; margin-right:auto;"></div>
+		<div class="container">
+			<div class="row">
+				<div class="span6">
+					<center><h1 style=""><?php echo $curr_3hr_psi; ?></h1></center>
+				</div>
+				<div class="span6">
+					<center><h1 style=""><?php echo $curr_pm25; ?> (&micro;g/m<sup>3</sup>)</h1></center>
+				</div>
+			</div>
+			<div class="row">
+				<div class="span6" id="psi_container" style="height:400px;"></div>
+				<div class="span6" id="pm25_container" style="height:400px;"></div>
+			</div>
+		</div>
 	</body>
 	<?php include_once("analyticstracking.php") ?>
 </html>
