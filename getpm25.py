@@ -23,6 +23,7 @@ SOUTH = 1
 EAST = 2
 WEST = 3
 CENTRAL = 4
+REGIONS = [ "North", "South", "East", "West", "Central" ]
 
 psi24_table = [[0 for x in xrange(24)] for x in xrange(5)]
 pm25_table = [[0 for x in xrange(24)] for x in xrange(5)]
@@ -126,47 +127,28 @@ for reading in pm25_readings:
 	pm25_table[ctr/12][ctr%12 + 12] = reading
 	ctr += 1
 
-print psi24_table
-print pm25_table
-
-exit(0)
-
-
-for value in times:
-	hr = int(value)/100
+#loop through hours in the day to get all the readings
+for hr in range(0, 24):
 	currdt = currdt.replace(hour=hr, minute=0, second=0, microsecond=0, tzinfo=GMT8())
-	# quit when the script tries to insert future data
-	if currdt > dtnow:
-		exit(0)
-	ts = int(time.mktime(currdt.timetuple()))
 
-	url = "http://app2.nea.gov.sg/anti-pollution-radiation-protection/air-pollution/psi/past-24-hour-psi-readings/time/" + value + "#psi24"
+	#only insert data if the timestamp is before the time now, there CAN'T be future data!!!
+	if currdt < dtnow:		
+		ts = int(time.mktime(currdt.timetuple()))
 
-	f = urllib.urlopen(url)
-	psihtml = f.read()
-	#find start and end of PSI and PM2.5 table
-	start_psi = psihtml.find("<strong>24-hr PM2.5 Concentration")
-	start_psi = psihtml.find("<tr>", start_psi)		#skip the superscript 3 which screws up the regex later
-	end_psi = psihtml.find("</table>", start_psi)
-	psihtml = psihtml[start_psi:end_psi]
+		# go through all the regions
+		for region_num in range(0, 5):
+			psi_24 = psi24_table[region_num][hr]
+			pm25 = pm25_table[region_num][hr]
 
-	#get PSI values, including the blank ones
-	table_data = re.findall(r'<td align="center">\s*([^-\s]*)\s*</td>', psihtml, re.M)
+			# make sure both values are numbers, not '-'
+			if psi_24.isdigit() and pm25.isdigit():
+				psi_24 = int(psi_24)
+				pm25 = int(pm25)
+				region = REGIONS[region_num]
 
-	#data is in the format region, 24 hour PSI, 24 hr PM2.5. with each item on 1 row
-	#3 iterations are needed for each record
-	i = 0
-	for row in table_data:
-		if i % 3 == 0:
-			region = row;
-		elif i % 3 == 1:
-			psi_24 = int(row)
-		else:
-			pm25 = int(row)
-			entry = { "timestamp": ts, "region": region, "psi_24": psi_24, "pm25": pm25 }
-			print entry
-			collection.update( { "timestamp": ts, "region": region }, entry, upsert=True )
-		i += 1
+				entry = { "timestamp": ts, "region": region, "psi_24": psi_24, "pm25": pm25 }
+				print entry
+				collection.update( { "timestamp": ts, "region": region }, entry, upsert=True )
 
 
 
