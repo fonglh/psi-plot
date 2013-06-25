@@ -25,6 +25,7 @@ WEST = 3
 CENTRAL = 4
 
 psi24_table = [[0 for x in xrange(24)] for x in xrange(5)]
+pm25_table = [[0 for x in xrange(24)] for x in xrange(5)]
 
 currdt = datetime.now(tz=GMT8())
 dtnow = datetime.now(tz=GMT8())
@@ -75,7 +76,7 @@ start_psi = psihtml.find("<strong>North</strong>", end_psi)
 end_psi = psihtml.find("<strong>Overall Singapore</strong>", start_psi)
 psi24hr = psihtml[start_psi:end_psi]
 
-#get 24 hour PSI values, including the blank ones, for 1st 12 hours
+#get 24 hour PSI values, including the blank ones, for 2nd 12 hours
 psi24_readings = re.findall(r'[\s>]([0-9-]{1,3})[\s<]', psi24hr)
 
 ctr = 0
@@ -83,7 +84,51 @@ for reading in psi24_readings:
 	psi24_table[ctr/12][ctr%12 + 12] = reading
 	ctr += 1
 
+# find start of 24 hour PM2.5 table
+start_psi = psihtml.find("<h1>24-hr PM2.5 Concentration from 12AM to 11.59PM on")
+psihtml = psihtml[start_psi:]
+
+#get current day of 24 hour PSI readings
+end_day = psihtml.find('</h1>')
+
+# dd MMM yyyy format
+day = re.findall(r'([0-9]+) [A-Za-z]{3} \d{4}', psihtml[:end_day])
+day = int(day[0])
+
+# quit as reading is not in yet
+if day != dtnow.day:
+	exit(0)
+
+# extract table of 24 hour PSI readings (1st 12 hours)
+start_psi = psihtml.find("<strong>North</strong>")
+end_psi = psihtml.find("<strong>Overall Singapore</strong>", start_psi)
+pm25html = psihtml[start_psi:end_psi]
+
+
+#get 24 hour PSI values, including the blank ones, for 1st 12 hours
+pm25_readings = re.findall(r'[\s>]([0-9-]{1,3})[\s<]', pm25html)
+
+ctr = 0
+for reading in pm25_readings:
+	pm25_table[ctr/12][ctr%12] = reading
+	ctr += 1
+
+# extract table of 24 hour PM2.5 readings (2nd 12 hours)
+start_psi = psihtml.find("<strong>North</strong>", end_psi)
+end_psi = psihtml.find("<strong>Overall Singapore</strong>", start_psi)
+pm25html = psihtml[start_psi:end_psi]
+
+#get 24 hour PSI values, including the blank ones, for 2nd 12 hours
+pm25_readings = re.findall(r'[\s>]([0-9-]{1,3})[\s<]', pm25html)
+
+ctr = 0
+for reading in pm25_readings:
+	pm25_table[ctr/12][ctr%12 + 12] = reading
+	ctr += 1
+
 print psi24_table
+print pm25_table
+
 exit(0)
 
 
