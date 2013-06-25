@@ -18,11 +18,18 @@
 				}
 			});
 
-
+			var chart1;
+			//get data and create 3 hour PSI reading chart
 			$.getJSON('http://localhost/psi/psijson.php?query=psi3hr-all&callback=?', function( data ) {
 				chart1 = new Highcharts.StockChart({
 					chart: {
 						renderTo: 'psi_container',
+						events: {
+							//set up updating of the chart every min
+							load: function() {
+								setInterval( updatePSI, 3000 );
+							}
+						}
 					},
 					rangeSelector: {
 						selected: 1
@@ -111,13 +118,35 @@
 
 					series: [{
 						name: '3-hr PSI Reading',
-						data: data
+						id: 'psi3hr',
+						data: data,
 					}]
 				});
 
 			});
 
-			
+			//get data and add to PSI reading chart
+			$.getJSON('http://localhost/psi/psijson.php?query=psi24hr-all&callback=?', function( data ) {
+				psi24_series = { name: 'PSI 24 hour Range', type: 'columnrange', id: 'psi24hr', data: data };
+				chart1.addSeries( psi24_series );
+			});
+
+			function updatePSI() {
+				$.getJSON('http://localhost/psi/psijson.php?query=psi3hr-last&callback=?', function( data ) {
+					series3hr = chart1.get( 'psi3hr' );
+					if ( data[0] == series3hr.xData[ series3hr.xData.length - 1 ] )
+						alert(series3hr.yData[series3hr.yData.length-1]);
+					else
+						alert('no match');
+
+				});
+
+				$.getJSON('http://localhost/psi/psijson.php?query=psi24hr-last&callback=?', function( data ) {
+					series24hr = chart1.get( 'psi24hr' );
+
+				});
+
+			}
 
 
 		});
