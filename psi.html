@@ -17,6 +17,12 @@
 					useUTC: false
 				}
 			});
+			
+			var series24hr;
+			//get data and add to PSI reading chart
+			$.getJSON('http://localhost/psi/psijson.php?query=psi24hr-all&callback=?', function( data ) {
+				series24hr = { name: 'PSI 24 hour Range', type: 'columnrange', id: 'psi24hr', data: data };
+			});
 
 			var chart1;
 			//get data and create 3 hour PSI reading chart
@@ -27,7 +33,7 @@
 						events: {
 							//set up updating of the chart every min
 							load: function() {
-								setInterval( updatePSI, 3000 );
+								setInterval( updatePSI, 6000 );
 							}
 						}
 					},
@@ -116,33 +122,32 @@
 
 					},
 
-					series: [{
+					series: [
+					series24hr,		// put the columnrange series first or the chart won't move on dynamic update
+					{
 						name: '3-hr PSI Reading',
 						id: 'psi3hr',
 						data: data,
-					}]
+					}
+					]
 				});
 
 			});
 
-			//get data and add to PSI reading chart
-			$.getJSON('http://localhost/psi/psijson.php?query=psi24hr-all&callback=?', function( data ) {
-				psi24_series = { name: 'PSI 24 hour Range', type: 'columnrange', id: 'psi24hr', data: data };
-				chart1.addSeries( psi24_series );
-			});
-
+		
 			function updatePSI() {
 				$.getJSON('http://localhost/psi/psijson.php?query=psi3hr-last&callback=?', function( data ) {
 					series3hr = chart1.get( 'psi3hr' );
-					if ( data[0] == series3hr.xData[ series3hr.xData.length - 1 ] )
-						alert(series3hr.yData[series3hr.yData.length-1]);
-					else
-						alert('no match');
+					if ( data[0] > series3hr.xData[ series3hr.xData.length - 1 ] )
+						series3hr.addPoint( data, true, true );
 
 				});
 
 				$.getJSON('http://localhost/psi/psijson.php?query=psi24hr-last&callback=?', function( data ) {
 					series24hr = chart1.get( 'psi24hr' );
+					if ( data[0] > series24hr.xData[ series24hr.xData.length - 1 ] ) {
+						series24hr.addPoint( data, true, true );
+					}
 
 				});
 
