@@ -18,16 +18,17 @@
 				}
 			});
 			
-			var series24hr;
-			//get data and add to PSI reading chart
-			$.getJSON('http://cosine.dyndns-web.com/psi/psijson.php?query=psi24hr-all&callback=?', function( data ) {
-				series24hr = { name: 'PSI 24 hour Range', type: 'columnrange', id: 'psi24hr', data: data };
+			var series24hrpsi;
+			//get data and prepare to add to PSI reading chart
+			$.getJSON('http://localhost/psi/psijson.php?query=psi24hr-all&callback=?', function( data ) {
+				series24hrpsi = { name: 'PSI 24 hour Range', type: 'columnrange', id: 'psi24hr', data: data };
 			});
 
-			var chart1;
+			var psichart;
+			var pm25chart;
 			//get data and create 3 hour PSI reading chart
-			$.getJSON('http://cosine.dyndns-web.com/psi/psijson.php?query=psi3hr-all&callback=?', function( data ) {
-				chart1 = new Highcharts.StockChart({
+			$.getJSON('http://localhost/psi/psijson.php?query=psi3hr-all&callback=?', function( data ) {
+				psichart = new Highcharts.StockChart({
 					chart: {
 						renderTo: 'psi_container',
 						events: {
@@ -123,7 +124,7 @@
 					},
 
 					series: [
-					series24hr,		// put the columnrange series first or the chart won't move on dynamic update
+					series24hrpsi,		// put the columnrange series first or the chart won't move on dynamic update
 					{
 						name: '3-hr PSI Reading',
 						id: 'psi3hr',
@@ -134,23 +135,106 @@
 
 			});
 
-		
-			function updatePSI() {
-				$.getJSON('http://cosine.dyndns-web.com/psi/psijson.php?query=psi3hr-last&callback=?', function( data ) {
-					series3hr = chart1.get( 'psi3hr' );
-					if ( data[0] > series3hr.xData[ series3hr.xData.length - 1 ] )
-						series3hr.addPoint( data, true, true );
+			$.getJSON('http://localhost/psi/psijson.php?query=pm25-all&callback=?', function( data ) {
+				pm25chart = new Highcharts.StockChart({
+					chart: {
+						renderTo: 'pm25_container',
+						events: {
+							//set up updating of the pm25 chart every min
+							load: function() {
+								setInterval( updatePM25, 60000 );
+							}
+						}
+					},
+					rangeSelector: {
+						selected: 1
+					},
 
+					title: {
+						text: '24-hr PM2.5 Concentration',
+					},
+
+					legend: {
+						enabled: true,
+						align: 'center',
+						verticalAlign: 'bottom',
+						borderWidth: 2,
+						itemMarginBottom: 10,
+					},
+
+					xAxis: {
+						ordinal: false
+					},
+
+					yAxis: {
+						title: {
+							text: 'Concentration (&micro;g/m<sup>3</sup>)',
+							useHTML: true
+						},
+					},
+
+					rangeSelector: {
+						buttons: [
+						{
+							type: 'day',
+							count: 7,
+							text: '7d'
+						}, 
+						{
+							type: 'day',
+							count: 3,
+							text: '3d'
+						},
+						{
+							type: 'day',
+							count: 1,
+							text: '1d'
+						},
+						{
+							type: 'all',
+							text: 'All'
+						}
+						],
+						selected: 2
+					},
+
+					series: [
+					{
+						name: '24-hr PM2.5 Concentration',
+						id: 'pm25',
+						type: 'columnrange',
+						data: data
+					},
+					]
 				});
 
-				$.getJSON('http://cosine.dyndns-web.com/psi/psijson.php?query=psi24hr-last&callback=?', function( data ) {
-					series24hr = chart1.get( 'psi24hr' );
-					if ( data[0] > series24hr.xData[ series24hr.xData.length - 1 ] ) {
-						series24hr.addPoint( data, true, true );
+			});
+		
+			function updatePSI() {
+				$.getJSON('http://localhost/psi/psijson.php?query=psi3hr-last&callback=?', function( data ) {
+					series3hr = psichart.get( 'psi3hr' );
+					if ( data[0] > series3hr.xData[ series3hr.xData.length - 1 ] ) {
+						series3hr.addPoint( data, true, true );
+					}
+				});
+
+				$.getJSON('http://localhost/psi/psijson.php?query=psi24hr-last&callback=?', function( data ) {
+					series24hrpsi = psichart.get( 'psi24hr' );
+					if ( data[0] > series24hrpsi.xData[ series24hrpsi.xData.length - 1 ] ) {
+						series24hrpsi.addPoint( data, true, true );
 					}
 
 				});
 
+			}
+
+			function updatePM25() {
+				$.getJSON('http://localhost/psi/psijson.php?query=pm25-last&callback=?', function( data ) {
+					seriespm25 = pm25chart.get( 'pm25' );
+					if ( data[0] > seriespm25.xData[ seriespm25.xData.length - 1] ) {
+						seriespm25.addPoint( data, true, true );
+					}
+				});
 			}
 
 
@@ -160,6 +244,11 @@
 	</head>
 
 	<body>
-		<div id="psi_container" style="width:100%; height:400px;"></div>
+		<div class="container">
+			<div class="row">
+				<div class="span6" id="psi_container" style="height:400px;"></div>
+				<div class="span6" id="pm25_container" style="height:400px;"></div>
+			</div>
+		</div>
 	</body>
 </html>
