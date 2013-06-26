@@ -21,14 +21,14 @@
 
 			var series24hrpsi;
 			//get data and prepare to add to PSI reading chart
-			$.getJSON('http://localhost/psi/psijson.php?query=psi24hr-all&callback=?', function( data ) {
+			$.getJSON('http://cosine.dyndns-web.com/psi/psijson.php?query=psi24hr-all&callback=?', function( data ) {
 				series24hrpsi = { name: 'PSI 24 hour Range', type: 'columnrange', id: 'psi24hr', data: data };
 			});
 
 			var psichart;
 			var pm25chart;
 			//get data and create 3 hour PSI reading chart
-			$.getJSON('http://localhost/psi/psijson.php?query=psi3hr-all&callback=?', function( data ) {
+			$.getJSON('http://cosine.dyndns-web.com/psi/psijson.php?query=psi3hr-all&callback=?', function( data ) {
 				psichart = new Highcharts.StockChart({
 					chart: {
 						renderTo: 'psi_container',
@@ -140,7 +140,7 @@
 
 			});
 
-			$.getJSON('http://localhost/psi/psijson.php?query=pm25-all&callback=?', function( data ) {
+			$.getJSON('http://cosine.dyndns-web.com/psi/psijson.php?query=pm25-all&callback=?', function( data ) {
 				pm25chart = new Highcharts.StockChart({
 					chart: {
 						renderTo: 'pm25_container',
@@ -220,7 +220,7 @@
 			});
 		
 			function updatePSI() {
-				$.getJSON('http://localhost/psi/psijson.php?query=psi3hr-last&callback=?', function( data ) {
+				$.getJSON('http://cosine.dyndns-web.com/psi/psijson.php?query=psi3hr-last&callback=?', function( data ) {
 					series3hr = psichart.get( 'psi3hr' );
 					if ( data[0] > series3hr.xData[ series3hr.xData.length - 1 ] ) {
 						series3hr.addPoint( data, true, true );
@@ -234,7 +234,7 @@
 					}
 				});
 
-				$.getJSON('http://localhost/psi/psijson.php?query=psi24hr-last&callback=?', function( data ) {
+				$.getJSON('http://cosine.dyndns-web.com/psi/psijson.php?query=psi24hr-last&callback=?', function( data ) {
 					series24hrpsi = psichart.get( 'psi24hr' );
 					if ( data[0] > series24hrpsi.xData[ series24hrpsi.xData.length - 1 ] ) {
 						series24hrpsi.addPoint( data, true, true );
@@ -245,7 +245,7 @@
 			}
 
 			function updatePM25() {
-				$.getJSON('http://localhost/psi/psijson.php?query=pm25-last&callback=?', function( data ) {
+				$.getJSON('http://cosine.dyndns-web.com/psi/psijson.php?query=pm25-last&callback=?', function( data ) {
 					seriespm25 = pm25chart.get( 'pm25' );
 					if ( data[0] > seriespm25.xData[ seriespm25.xData.length - 1] ) {
 						seriespm25.addPoint( data, true, true );
