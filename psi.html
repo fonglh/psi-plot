@@ -133,6 +133,10 @@
 					]
 				});
 
+				//initialize PSI display field with latest value
+				psi24_last = data[ data.length - 1 ];
+				$('#psi24').html(psi24_last[1]);
+
 			});
 
 			$.getJSON('http://localhost/psi/psijson.php?query=pm25-all&callback=?', function( data ) {
@@ -208,6 +212,11 @@
 					]
 				});
 
+
+				//initialize PM2.5 display field with latest value
+				pm25_last = data[ data.length - 1 ];
+				$('#pm25').html(pm25_last[1] + "-" + pm25_last[2] + " (&micro;g/m<sup>3</sup>)");
+
 			});
 		
 			function updatePSI() {
@@ -215,6 +224,9 @@
 					series3hr = psichart.get( 'psi3hr' );
 					if ( data[0] > series3hr.xData[ series3hr.xData.length - 1 ] ) {
 						series3hr.addPoint( data, true, true );
+
+						//also update PSI display field
+						$('#psi24').html( data[1] );
 					}
 				});
 
@@ -233,6 +245,9 @@
 					seriespm25 = pm25chart.get( 'pm25' );
 					if ( data[0] > seriespm25.xData[ seriespm25.xData.length - 1] ) {
 						seriespm25.addPoint( data, true, true );
+
+						//also update PM2.5 display field
+						$('#pm25').html( data[1] + "-" + data[2] + " (&micro;g/m<sup>3</sup>)");
 					}
 				});
 			}
@@ -246,9 +261,27 @@
 	<body>
 		<div class="container">
 			<div class="row">
+				<div class="span6">
+					<center><h1 id="psi24"></h1></center>
+				</div>
+				<div class="span6">
+					<center><h1 id="pm25"></h1></center>
+				</div>
+			</div>
+			<div class="row">
 				<div class="span6" id="psi_container" style="height:400px;"></div>
 				<div class="span6" id="pm25_container" style="height:400px;"></div>
 			</div>
 		</div>
 	</body>
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-41948383-1', 'cosine.dyndns-web.com');
+	  ga('send', 'pageview');
+
+	</script>
 </html>
