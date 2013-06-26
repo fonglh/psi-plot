@@ -9,6 +9,7 @@
 		<script src="highstock.js"></script>
 		<script src="highcharts-more.js"></script>
 		<script src="js/bootstrap.min.js"></script>
+		<script src="js/dateformat.min.js"></script>
 
 		<script>
 		$(function() {
@@ -17,7 +18,7 @@
 					useUTC: false
 				}
 			});
-			
+
 			var series24hrpsi;
 			//get data and prepare to add to PSI reading chart
 			$.getJSON('http://localhost/psi/psijson.php?query=psi24hr-all&callback=?', function( data ) {
@@ -40,10 +41,6 @@
 					},
 					rangeSelector: {
 						selected: 1
-					},
-
-					title: {
-						text: 'PSI Readings'
 					},
 
 					legend: {
@@ -134,8 +131,12 @@
 				});
 
 				//initialize PSI display field with latest value
-				psi24_last = data[ data.length - 1 ];
-				$('#psi24').html(psi24_last[1]);
+				psi3_last = data[ data.length - 1 ];
+				$('#psi3hr').html(psi3_last[1]);
+
+				//initialize 3 hour PSI update time
+				var psi3_update = new Date( psi3_last[0] );
+				$('#psi3hr-update-time').html( 'At ' + psi3_update.format('ga \\o\\n d M Y') );
 
 			});
 
@@ -152,10 +153,6 @@
 					},
 					rangeSelector: {
 						selected: 1
-					},
-
-					title: {
-						text: '24-hr PM2.5 Concentration',
 					},
 
 					legend: {
@@ -212,10 +209,13 @@
 					]
 				});
 
-
 				//initialize PM2.5 display field with latest value
 				pm25_last = data[ data.length - 1 ];
 				$('#pm25').html(pm25_last[1] + "-" + pm25_last[2] + " (&micro;g/m<sup>3</sup>)");
+
+				//initialize PM2.5 update time field
+				var pm25_update = new Date( pm25_last[0] );
+				$('#pm25-update-time').html( 'At ' + pm25_update.format('ga \\o\\n d M Y') );
 
 			});
 		
@@ -226,7 +226,11 @@
 						series3hr.addPoint( data, true, true );
 
 						//also update PSI display field
-						$('#psi24').html( data[1] );
+						$('#psi3hr').html( data[1] );
+
+						//update PSI update time field
+						var psi3_update = new Date( data[0] );
+						$('#psi3hr-update-time').html( 'At ' + psi3_update.format('ga \\o\\n d M Y') );
 					}
 				});
 
@@ -248,6 +252,10 @@
 
 						//also update PM2.5 display field
 						$('#pm25').html( data[1] + "-" + data[2] + " (&micro;g/m<sup>3</sup>)");
+
+						//update PM2.5 update time field
+						var pm25_update = new Date( data[0] );
+						$('#pm25-update-time').html( 'At ' + pm25_update.format('ga \\o\\n d M Y') );
 					}
 				});
 			}
@@ -262,12 +270,31 @@
 		<div class="container">
 			<div class="row">
 				<div class="span6">
-					<center><h1 id="psi24"></h1></center>
+					<h5 style="text-align: center">3 hour PSI</h5>
 				</div>
 				<div class="span6">
-					<center><h1 id="pm25"></h1></center>
+					<h5 style="text-align: center">24 hour PM2.5 Concentration</h5>
 				</div>
 			</div>
+
+			<div class="row">
+				<div class="span6">
+					<h1 id="psi3hr" style="text-align: center"></h1>
+				</div>
+				<div class="span6">
+					<h1 id="pm25" style="text-align: center"></h1>
+				</div>
+			</div>
+			
+			<div class="row">
+				<div class="span6">
+					<p id="psi3hr-update-time" style="text-align: center"></p>
+				</div>
+				<div class="span6">
+					<p id="pm25-update-time" style="text-align: center"></p>
+				</div>
+			</div>
+
 			<div class="row">
 				<div class="span6" id="psi_container" style="height:400px;"></div>
 				<div class="span6" id="pm25_container" style="height:400px;"></div>
