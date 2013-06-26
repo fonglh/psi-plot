@@ -267,42 +267,41 @@
 	</head>
 
 	<body>
-		<!-- headings -->
 		<div class="container">
 			<div class="row">
+				<!-- PSI data -->
 				<div class="span6">
-					<h5 style="text-align: center">3 hour PSI</h5>
+					<div class="row">
+						<h5 style="text-align: center">3 hour PSI</h5>
+					</div>
+					<div class="row">
+						<h1 id="psi3hr" style="text-align: center"></h1>
+					</div>
+					<div class="row">
+						<p id="psi3hr-update-time" style="text-align: center"></p>
+					</div>
 				</div>
+
+				<!-- PM2.5 data -->
 				<div class="span6">
-					<h5 style="text-align: center">24 hour PM2.5 Concentration</h5>
+					<div class="row">
+						<h5 style="text-align: center">24 hour PM2.5 Concentration</h5>
+					</div>
+					<div class="row">
+						<h1 id="pm25" style="text-align: center"></h1>
+					</div>
+					<div class="row">
+						<p id="pm25-update-time" style="text-align: center"></p>
+					</div>
 				</div>
 			</div>
 
-			<!-- PSI and PM2.5 readings -->
-			<div class="row">
-				<div class="span6">
-					<h1 id="psi3hr" style="text-align: center"></h1>
-				</div>
-				<div class="span6">
-					<h1 id="pm25" style="text-align: center"></h1>
-				</div>
-			</div>
-			
-			<!-- Last updated time -->
-			<div class="row">
-				<div class="span6">
-					<p id="psi3hr-update-time" style="text-align: center"></p>
-				</div>
-				<div class="span6">
-					<p id="pm25-update-time" style="text-align: center"></p>
-				</div>
-			</div>
-
-			<!-- graphs -->
+			<!-- graphs --> 
 			<div class="row">
 				<div class="span6" id="psi_container" style="height:400px;"></div>
 				<div class="span6" id="pm25_container" style="height:400px;"></div>
 			</div>
+
 		</div>
 	</body>
 	<script>
