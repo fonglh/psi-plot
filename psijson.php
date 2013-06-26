@@ -127,54 +127,81 @@ else if ( $query === 'psi24hr-last' )
 	$psi_24hr_last_arr = array( floatval($psi_24hr_last[ 'timestamp' ] . "000"), intval($psi_24hr_last[ 'min' ]), intval($psi_24hr_last[ 'max' ]) );
 	$json = json_encode( $psi_24hr_last_arr );
 }
+else if ( $query === 'pm25-all' )
+{
+	//get PM2.5 readings
+	$c_readings = $db -> selectCollection( $dbname, "psi_24hr_pm25" );
+
+	$aggregate_ops = array(
+			array(
+				'$group' => array(
+					"_id" => '$timestamp',
+					"min" => array('$min'=>'$pm25'),
+					"max" => array('$max'=>'$pm25')
+					)
+				),
+			array(
+				'$project' => array(
+					"timestamp" => '$_id',
+					'_id' => 0,
+					"min" => 1,
+					"max" => 1,
+					)
+				),
+			array(
+				'$sort' => array(
+					'timestamp' => 1
+					)
+				)
+			);
+
+	$pm25_data = $c_readings -> aggregate( $aggregate_ops );
+	$pm25_data = $pm25_data[ 'result' ];
+
+	foreach ( $pm25_data as &$psi_reading )
+	{
+		// javascript timestamps are in milliseconds so the values need to be multipled by 1000
+		$pm25_arr[] = array( floatval($psi_reading[ 'timestamp' ] . "000"), intval($psi_reading[ 'min' ]), intval($psi_reading[ 'max' ]) );
+	}
+	$json = json_encode( $pm25_arr );
+}
+else if ( $query === 'pm25-last' )
+{
+	//get PM2.5 readings
+	$c_readings = $db -> selectCollection( $dbname, "psi_24hr_pm25" );
+
+	$aggregate_ops = array(
+			array(
+				'$group' => array(
+					"_id" => '$timestamp',
+					"min" => array('$min'=>'$pm25'),
+					"max" => array('$max'=>'$pm25')
+					)
+				),
+			array(
+				'$project' => array(
+					"timestamp" => '$_id',
+					'_id' => 0,
+					"min" => 1,
+					"max" => 1,
+					)
+				),
+			array(
+				'$sort' => array(
+					'timestamp' => 1
+					)
+				)
+			);
+
+	$pm25_data = $c_readings -> aggregate( $aggregate_ops );
+	$pm25_data = $pm25_data[ 'result' ];
+	$pm25_last = array_pop( $pm25_data );
+	$pm25_last_arr = array( floatval($pm25_last[ 'timestamp' ] . "000"), intval($pm25_last[ 'min' ]), intval($pm25_last[ 'max' ]) );
+	$json = json_encode( $pm25_last_arr );
+}
 
 header( 'Content-Type: text/javascript' );
 echo "$callback($json);";
-
-die;
-
-
-//get PM2.5 readings
-$aggregate_ops = array(
-		array(
-			'$group' => array(
-				"_id" => '$timestamp',
-				"min" => array('$min'=>'$pm25'),
-				"max" => array('$max'=>'$pm25')
-				)
-			),
-		array(
-			'$project' => array(
-				"timestamp" => '$_id',
-				'_id' => 0,
-				"min" => 1,
-				"max" => 1,
-				)
-			),
-		array(
-			'$sort' => array(
-				'timestamp' => 1
-				)
-			)
-		);
-		$pm25_data = $c_readings -> aggregate( $aggregate_ops );
-		$pm25_data = $pm25_data[ 'result' ];
-
-		$pm25_str = "[";
-
-foreach ( $pm25_data as &$psi_reading )
-{
-
-	// javascript timestamps are in milliseconds so the values need to be multipled by 1000
-	$pm25_str .= "[" . $psi_reading[ 'timestamp' ] . "000, " . $psi_reading[ 'min' ] . ", " . $psi_reading[ 'max' ] . "], ";
-
-	// used later for current value display
-	$curr_pm25 = $psi_reading[ 'min' ] . "-" . $psi_reading[ 'max' ];
-}
-
-//replace final ", " with "]"
-$pm25_str = substr( $pm25_str, 0, strlen( $pm25_str ) - 2 );
-$pm25_str .= "]"; 
 
 ?>
 
