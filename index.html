@@ -235,10 +235,22 @@
 				if ( dt_now > dt_nxtCheck ) {
 					$.getJSON('http://cosine.dyndns-web.com/psi/psijson.php?query=psi3hr-last&callback=?', function( data ) {
 						if ( data[0] > dt_psi3hr.getTime() ) {
+							oldpsi = series3hr.yData[ series3hr.yData.length - 1 ];
+							newpsi = data[1];
 							series3hr.addPoint( data, true, true );
 
 							//also update PSI display field
-							$('#psi3hr').html( data[1] );
+							$('#psi3hr').html( newpsi );
+
+							if ( newpsi > oldpsi ) {
+								transitionUp( '#psi3hr' );	
+							}
+							else if ( newpsi < oldpsi ){
+								transitionDown( '#psi3hr' );	
+							}
+							else {
+								transitionEqual( '#psi3hr' );
+							}
 
 							//update PSI update time field
 							var psi3_update = new Date( data[0] );
@@ -289,6 +301,34 @@
 						}
 					});
 				}
+			}
+
+			// flash red when value goes up
+			function transitionUp( elementName ) {
+				//origColor =  jQuery.Color ( $(elementName), 'color' );
+				origColor = $(elementName).css('color');
+				$(elementName).animate( {
+								color: "#f00"
+							}, 1000 );			
+				$(elementName).animate( { color: origColor }, 1000 );
+			}
+
+			// flash green when value goes down
+			function transitionDown(elementName) {
+				origColor = $(elementName).css('color');
+				$(elementName).animate( {
+								color: "#0f0"
+							}, 1000 );
+				$(elementName).animate( { color: origColor }, 1000 );
+			}
+
+			// flash white when value remains the same
+			function transitionEqual(elementName) {
+				origColor = $(elementName).css('color');
+				$(elementName).animate( {
+								color: "#fff"
+							}, 1000 );
+				$(elementName).animate( { color: origColor }, 1000 );
 			}
 
 
