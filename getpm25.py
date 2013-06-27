@@ -4,6 +4,7 @@
 
 import urllib
 import re
+import pymongo
 from pymongo import MongoClient
 from pymongo.errors import PyMongoError
 from datetime import datetime, tzinfo, timedelta
@@ -83,6 +84,20 @@ except PyMongoError:
 	pass
 collection = db.psi_24hr_pm25
 
+# check if the latest data already exists
+cursor = collection.find().sort( 'timestamp', pymongo.DESCENDING ).limit(1)
+
+# figure out when to check the website again, should be at least 1 hour from the last reading
+psi24hr_last = cursor[0][ 'timestamp' ]
+dt_psi24hr_last = datetime.fromtimestamp( psi24hr_last, tz=GMT8() )
+dt_nxtCheck = dt_psi24hr_last + timedelta( hours=1 )
+
+# not time to check yet
+if dtnow < dt_nxtCheck:
+	exit(0)
+
+# both 24 hour PSI readings and 24 hour PM2.5 readings must be in before
+# this script will insert the entry into the database
 f = urllib.urlopen("http://app2.nea.gov.sg/anti-pollution-radiation-protection/air-pollution/psi/psi-readings-over-the-last-24-hours")
 psihtml = f.read()
 
