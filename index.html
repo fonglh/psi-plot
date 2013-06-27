@@ -20,17 +20,115 @@
 				}
 			});
 
-			var series24hrpsi;
-			//get data and prepare to add to PSI reading chart
-			$.getJSON('http://cosine.dyndns-web.com/psi/psijson.php?query=psi24hr-all&callback=?', function( data ) {
-				series24hrpsi = { name: 'PSI 24 hour Range', type: 'columnrange', id: 'psi24hr', data: data };
-			});
+			var psiSeries = [],
+				seriesCounter = 0,
+				psijson_call = ['psi24hr-all', 'psi3hr-all'],
+				psi_names = [ 'PSI 24 hour Range', '3-hr PSI Reading' ],
+				psi_chart_types = ['columnrange', 'line'],
+				psi_ids = [ 'psi24hr', 'psi3hr' ];
 
 			var psichart;
 			var pm25chart;
-			//get data and create 3 hour PSI reading chart
-			$.getJSON('http://cosine.dyndns-web.com/psi/psijson.php?query=psi3hr-all&callback=?', function( data ) {
-				console.log(series24hrpsi);
+
+			$.each( psi_names, function(i, name) {
+				$.getJSON('http://cosine.dyndns-web.com/psi/psijson.php?query='+psijson_call[i] + '&callback=?', function( data ) {
+					psiSeries[i] = {
+						name: name,
+						type: psi_chart_types[i],
+						id: psi_ids[i],
+						data: data
+					};
+
+					//as we're loading the data asynchronously, we don't know when it'll arrive. so
+					//we keep a counter and create the chart when all the data is loaded.
+					seriesCounter++;
+
+					if( seriesCounter == psi_names.length ) {
+						createPSIChart();
+					}
+				});
+			});
+
+			$.getJSON('http://cosine.dyndns-web.com/psi/psijson.php?query=pm25-all&callback=?', function( data ) {
+				pm25chart = new Highcharts.StockChart({
+					chart: {
+						renderTo: 'pm25_container',
+						events: {
+							//set up updating of the pm25 chart every min
+							load: function() {
+								setInterval( updatePM25, 60000 );
+							}
+						}
+					},
+					rangeSelector: {
+						selected: 1
+					},
+
+					legend: {
+						enabled: true,
+						align: 'center',
+						verticalAlign: 'bottom',
+						borderWidth: 2,
+						itemMarginBottom: 10,
+					},
+
+					xAxis: {
+						ordinal: false
+					},
+
+					yAxis: {
+						title: {
+							text: 'Concentration (&micro;g/m<sup>3</sup>)',
+							useHTML: true
+						},
+					},
+
+					rangeSelector: {
+						buttons: [
+						{
+							type: 'day',
+							count: 7,
+							text: '7d'
+						}, 
+						{
+							type: 'day',
+							count: 3,
+							text: '3d'
+						},
+						{
+							type: 'day',
+							count: 1,
+							text: '1d'
+						},
+						{
+							type: 'all',
+							text: 'All'
+						}
+						],
+						selected: 2
+					},
+
+					series: [
+					{
+						name: '24-hr PM2.5 Concentration',
+						id: 'pm25',
+						type: 'columnrange',
+						data: data
+					},
+					]
+				});
+
+				//initialize PM2.5 display field with latest value
+				pm25_last = data[ data.length - 1 ];
+				$('#pm25').html(pm25_last[1] + "-" + pm25_last[2] + " (&micro;g/m<sup>3</sup>)");
+
+				//initialize PM2.5 update time field
+				var pm25_update = new Date( pm25_last[0] );
+				$('#pm25-update-time').html( 'At ' + pm25_update.format('ga \\o\\n d M Y') );
+
+			});
+		
+			function createPSIChart() {
 				psichart = new Highcharts.StockChart({
 					chart: {
 						renderTo: 'psi_container',
@@ -122,105 +220,21 @@
 
 					},
 
-					series: [
-					series24hrpsi,		// put the columnrange series first or the chart won't move on dynamic update
-					{
-						name: '3-hr PSI Reading',
-						id: 'psi3hr',
-						data: data,
-					}
-					]
+					series: psiSeries
 				});
+				
 
 				//initialize PSI display field with latest value
+				data = psiSeries[1]['data'];
 				psi3_last = data[ data.length - 1 ];
 				$('#psi3hr').html(psi3_last[1]);
 
 				//initialize 3 hour PSI update time
 				var psi3_update = new Date( psi3_last[0] );
 				$('#psi3hr-update-time').html( 'At ' + psi3_update.format('ga \\o\\n d M Y') );
+			}
 
-			});
 
-			$.getJSON('http://cosine.dyndns-web.com/psi/psijson.php?query=pm25-all&callback=?', function( data ) {
-				pm25chart = new Highcharts.StockChart({
-					chart: {
-						renderTo: 'pm25_container',
-						events: {
-							//set up updating of the pm25 chart every min
-							load: function() {
-								setInterval( updatePM25, 60000 );
-							}
-						}
-					},
-					rangeSelector: {
-						selected: 1
-					},
-
-					legend: {
-						enabled: true,
-						align: 'center',
-						verticalAlign: 'bottom',
-						borderWidth: 2,
-						itemMarginBottom: 10,
-					},
-
-					xAxis: {
-						ordinal: false
-					},
-
-					yAxis: {
-						title: {
-							text: 'Concentration (&micro;g/m<sup>3</sup>)',
-							useHTML: true
-						},
-					},
-
-					rangeSelector: {
-						buttons: [
-						{
-							type: 'day',
-							count: 7,
-							text: '7d'
-						}, 
-						{
-							type: 'day',
-							count: 3,
-							text: '3d'
-						},
-						{
-							type: 'day',
-							count: 1,
-							text: '1d'
-						},
-						{
-							type: 'all',
-							text: 'All'
-						}
-						],
-						selected: 2
-					},
-
-					series: [
-					{
-						name: '24-hr PM2.5 Concentration',
-						id: 'pm25',
-						type: 'columnrange',
-						data: data
-					},
-					]
-				});
-
-				//initialize PM2.5 display field with latest value
-				pm25_last = data[ data.length - 1 ];
-				$('#pm25').html(pm25_last[1] + "-" + pm25_last[2] + " (&micro;g/m<sup>3</sup>)");
-
-				//initialize PM2.5 update time field
-				var pm25_update = new Date( pm25_last[0] );
-				$('#pm25-update-time').html( 'At ' + pm25_update.format('ga \\o\\n d M Y') );
-
-			});
-		
 			function updatePSI() {
 				//timestamp of latest 3 hour PSI data
 				series3hr = psichart.get( 'psi3hr' );
@@ -348,7 +362,8 @@
 					</div>
 					<div class="row">
 							<h1 class="span2 offset2" id="psi3hr" 
-								style="text-align: center; font-size: 4.5em; line-height: 80px; background-color: #ff0; border-radius: 15px;"></h1>
+								style="text-align: center; font-size: 4.5em; line-height: 80px; background-color: #fff; border-radius: 15px;"></h1>
+							<br/>
 					</div>
 					<div class="row">
 						<p class="span6" id="psi3hr-update-time" style="text-align: center"></p>
@@ -359,14 +374,14 @@
 				<!-- PM2.5 data -->
 				<div class="span6">
 					<div class="row">
-						<h5 style="text-align: center">24 hour PM2.5 Concentration</h5>
+						<h5 class="span6" style="text-align: center">24 hour PM2.5 Concentration</h5>
 					</div>
 					<div class="row">
-						<h1 id="pm25" style="text-align: center; font-size: 4.5em; line-height: 80px;"></h1>
+						<h1 class="span6" id="pm25" style="text-align: center; font-size: 4.5em; line-height: 80px;"></h1>
 						<br/>
 					</div>
 					<div class="row">
-						<p id="pm25-update-time" style="text-align: center"></p>
+						<p class="span6" id="pm25-update-time" style="text-align: center"></p>
 						<br/>
 					</div>
 				</div>
