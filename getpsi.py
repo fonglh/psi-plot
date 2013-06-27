@@ -2,6 +2,7 @@
 
 import urllib
 import re
+import pymongo
 from pymongo import MongoClient
 from pymongo.errors import PyMongoError
 from datetime import datetime, tzinfo, timedelta
@@ -26,6 +27,19 @@ try:
 except PyMongoError:
 	pass
 collection = db.psi_readings
+
+# check if the latest data already exists
+cursor = collection.find().sort( 'timestamp', pymongo.DESCENDING ).limit(1)
+
+# figure out when to check the website again, should be at least 1 hour from the last reading
+psi3hr_last = cursor[0][ 'timestamp' ]
+dt_psi3hr_last = datetime.fromtimestamp( psi3hr_last, tz=GMT8() )
+dt_nxtCheck = dt_psi3hr_last + timedelta( hours=1 )
+
+# not time to check yet
+if dtnow < dt_nxtCheck:
+	exit(0)
+
 
 f = urllib.urlopen("http://app2.nea.gov.sg/anti-pollution-radiation-protection/air-pollution/psi/psi-readings-over-the-last-24-hours")
 psihtml = f.read()
