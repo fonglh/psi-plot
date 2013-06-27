@@ -6,8 +6,8 @@
 		<link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
 		<link href="css/bootstrap-responsive.css" rel="stylesheet">
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
-		<script src="highstock.js"></script>
-		<script src="highcharts-more.js"></script>
+		<script src="js/highstock.js"></script>
+		<script src="js/highcharts-more.js"></script>
 		<script src="js/bootstrap.min.js"></script>
 		<script src="js/dateformat.min.js"></script>
 
@@ -220,44 +220,74 @@
 			});
 		
 			function updatePSI() {
-				$.getJSON('http://cosine.dyndns-web.com/psi/psijson.php?query=psi3hr-last&callback=?', function( data ) {
-					series3hr = psichart.get( 'psi3hr' );
-					if ( data[0] > series3hr.xData[ series3hr.xData.length - 1 ] ) {
-						series3hr.addPoint( data, true, true );
+				//timestamp of latest 3 hour PSI data
+				series3hr = psichart.get( 'psi3hr' );
+				dt_psi3hr = new Date( series3hr.xData[ series3hr.xData.length - 1 ] );
+				//next check should be at least 1 hour later
+				dt_nxtCheck = new Date();
+				dt_nxtCheck.setTime( dt_psi3hr.getTime() + ( 60 * 60 * 1000 ) );
 
-						//also update PSI display field
-						$('#psi3hr').html( data[1] );
+				//datetime now
+				dt_now = new Date();
 
-						//update PSI update time field
-						var psi3_update = new Date( data[0] );
-						$('#psi3hr-update-time').html( 'At ' + psi3_update.format('ga \\o\\n d M Y') );
-					}
-				});
+				//only update if the time now is 1 hour after the latest value
+				if ( dt_now > dt_nxtCheck ) {
+					$.getJSON('http://cosine.dyndns-web.com/psi/psijson.php?query=psi3hr-last&callback=?', function( data ) {
+						if ( data[0] > dt_psi3hr.getTime() ) {
+							series3hr.addPoint( data, true, true );
 
-				$.getJSON('http://cosine.dyndns-web.com/psi/psijson.php?query=psi24hr-last&callback=?', function( data ) {
-					series24hrpsi = psichart.get( 'psi24hr' );
-					if ( data[0] > series24hrpsi.xData[ series24hrpsi.xData.length - 1 ] ) {
-						series24hrpsi.addPoint( data, true, true );
-					}
+							//also update PSI display field
+							$('#psi3hr').html( data[1] );
 
-				});
+							//update PSI update time field
+							var psi3_update = new Date( data[0] );
+							$('#psi3hr-update-time').html( 'At ' + psi3_update.format('ga \\o\\n d M Y') );
+						}
+					});
+				}
 
+				//timestamp of latest 24 hour PSI data
+				series24hrpsi = psichart.get( 'psi24hr' );
+				dt_psi24hr = new Date( series24hrpsi.xData[ series24hrpsi.xData.length - 1 ] );
+				//next check should be at least 1 hour later
+				dt_nxtCheck.setTime( dt_psi24hr.getTime() + ( 60 * 60 * 1000 ) );
+
+				if ( dt_now > dt_nxtCheck ) {
+					$.getJSON('http://cosine.dyndns-web.com/psi/psijson.php?query=psi24hr-last&callback=?', function( data ) {
+						if ( data[0] > dt_psi24hr.getTime() ) {
+							series24hrpsi.addPoint( data, true, true );
+						}
+					});
+				}
 			}
 
 			function updatePM25() {
-				$.getJSON('http://cosine.dyndns-web.com/psi/psijson.php?query=pm25-last&callback=?', function( data ) {
-					seriespm25 = pm25chart.get( 'pm25' );
-					if ( data[0] > seriespm25.xData[ seriespm25.xData.length - 1] ) {
-						seriespm25.addPoint( data, true, true );
+				//timestamp of latest PM2.5 update
+				seriespm25 = pm25chart.get( 'pm25' );
+				dt_pm25 = new Date( seriespm25.xData[ seriespm25.xData.length - 1] );
+				//next check should be at least 1 hour later
+				dt_nxtCheck = new Date();
+				dt_nxtCheck.setTime( dt_pm25.getTime() + ( 60 * 60 * 1000 ) );
 
-						//also update PM2.5 display field
-						$('#pm25').html( data[1] + "-" + data[2] + " (&micro;g/m<sup>3</sup>)");
+				//datetime now
+				dt_now = new Date();
 
-						//update PM2.5 update time field
-						var pm25_update = new Date( data[0] );
-						$('#pm25-update-time').html( 'At ' + pm25_update.format('ga \\o\\n d M Y') );
-					}
-				});
+				//only update if the time now is 1 hour after the latest value
+				if ( dt_now > dt_nxtCheck ) {
+					$.getJSON('http://cosine.dyndns-web.com/psi/psijson.php?query=pm25-last&callback=?', function( data ) {
+						seriespm25 = pm25chart.get( 'pm25' );
+						if ( data[0] > dt_pm25.getTime() ) {
+							seriespm25.addPoint( data, true, true );
+
+							//also update PM2.5 display field
+							$('#pm25').html( data[1] + "-" + data[2] + " (&micro;g/m<sup>3</sup>)");
+
+							//update PM2.5 update time field
+							var pm25_update = new Date( data[0] );
+							$('#pm25-update-time').html( 'At ' + pm25_update.format('ga \\o\\n d M Y') );
+						}
+					});
+				}
 			}
 
 
