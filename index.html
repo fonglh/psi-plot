@@ -30,6 +30,7 @@
 			var pm25chart;
 			//get data and create 3 hour PSI reading chart
 			$.getJSON('http://cosine.dyndns-web.com/psi/psijson.php?query=psi3hr-all&callback=?', function( data ) {
+				console.log(series24hrpsi);
 				psichart = new Highcharts.StockChart({
 					chart: {
 						renderTo: 'psi_container',
@@ -343,14 +344,14 @@
 				<!-- PSI data -->
 				<div class="span6">
 					<div class="row">
-						<h5 style="text-align: center">3 hour PSI</h5>
+						<h5 class="span6" style="text-align: center">3 hour PSI</h5>
 					</div>
 					<div class="row">
-						<h1 id="psi3hr" style="text-align: center; font-size: 4.5em; line-height: 80px"></h1>
-						<br/>
+							<h1 class="span2 offset2" id="psi3hr" 
+								style="text-align: center; font-size: 4.5em; line-height: 80px; background-color: #ff0; border-radius: 15px;"></h1>
 					</div>
 					<div class="row">
-						<p id="psi3hr-update-time" style="text-align: center"></p>
+						<p class="span6" id="psi3hr-update-time" style="text-align: center"></p>
 						<br/>
 					</div>
 				</div>
