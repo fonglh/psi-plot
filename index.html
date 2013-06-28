@@ -258,8 +258,8 @@
 
 							//also update PSI display field
 							$('#psi3hr').html( newpsi );
-							setPSIColor( '#psi3hr', newpsi );
 
+							//animation effects
 							if ( newpsi > oldpsi ) {
 								transitionUp( '#psi3hr' );	
 							}
@@ -269,6 +269,8 @@
 							else {
 								transitionEqual( '#psi3hr' );
 							}
+
+							setPSIColor( '#psi3hr', newpsi );
 
 							//update PSI update time field
 							var psi3_update = new Date( data[0] );
