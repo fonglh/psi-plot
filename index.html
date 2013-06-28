@@ -4,7 +4,8 @@
 		<title>Singapore PSI Readings</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
-		<link href="css/bootstrap-responsive.css" rel="stylesheet">
+		<link href="css/bootstrap-responsive.min.css" rel="stylesheet">
+		<link href="css/styles.css" rel="stylesheet">
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
 		<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
 		<script src="js/highstock.js"></script>
@@ -320,32 +321,27 @@
 
 			// flash red when value goes up
 			function transitionUp( elementName ) {
-				//origColor =  jQuery.Color ( $(elementName), 'color' );
-				origColor = $(elementName).css('color');
-				$(elementName).animate( {
-								color: "#f00"
-							}, 1000 );			
-				$(elementName).animate( { color: origColor }, 1000 );
+				transition( elementName, '#f00' );
 			}
 
 			// flash green when value goes down
 			function transitionDown(elementName) {
-				origColor = $(elementName).css('color');
-				$(elementName).animate( {
-								color: "#0f0"
-							}, 1000 );
-				$(elementName).animate( { color: origColor }, 1000 );
+				transition( elementName, '#0f0' );
 			}
 
 			// flash white when value remains the same
 			function transitionEqual(elementName) {
+				transition( elementName, '#fff' );
+			}
+			
+			// flash [color] for elementName
+			function transition( elementName, color ) {
 				origColor = $(elementName).css('color');
 				$(elementName).animate( {
-								color: "#fff"
-							}, 1000 );
+								color: color
+							}, 1000);
 				$(elementName).animate( { color: origColor }, 1000 );
 			}
-
 
 		});
 		</script>
@@ -361,12 +357,11 @@
 						<h5 class="span6" style="text-align: center">3 hour PSI</h5>
 					</div>
 					<div class="row">
-							<h1 class="span2 offset2" id="psi3hr" 
-								style="text-align: center; font-size: 4.5em; line-height: 80px; background-color: #fff; border-radius: 15px;"></h1>
+							<h1 class="span2 offset2 reading" id="psi3hr"></h1>
 							<br/>
 					</div>
 					<div class="row">
-						<p class="span6" id="psi3hr-update-time" style="text-align: center; margin-top: 15px; margin-bottom: 30px;"></p>
+						<p class="span6 update-time" id="psi3hr-update-time"></p>
 						<br/>
 					</div>
 				</div>
@@ -377,11 +372,11 @@
 						<h5 class="span6" style="text-align: center">24 hour PM2.5 Concentration</h5>
 					</div>
 					<div class="row">
-						<h1 class="span6" id="pm25" style="text-align: center; font-size: 4.5em; line-height: 80px;"></h1>
+						<h1 class="span6 reading" id="pm25"></h1>
 						<br/>
 					</div>
 					<div class="row">
-						<p class="span6" id="pm25-update-time" style="text-align: center; margin-top: 15px; margin-bottom: 30px"></p>
+						<p class="span6 update-time" id="pm25-update-time"></p>
 						<br/>
 					</div>
 				</div>
