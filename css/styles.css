@@ -8,6 +8,7 @@
 	line-height: 80px;
 	background-color: #fff;
 	border-radius: 15px;
+	transition: background-color 4.0s ease;
 }
 
 .update-time {
