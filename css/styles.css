@@ -1,0 +1,17 @@
+/* CSS styles for PSI monitoring webpage
+ * Moved here to keep the main HTML file neat
+*/
+
+.reading {
+	text-align: center;
+	font-size: 4.5em;
+	line-height: 80px;
+	background-color: #0ff;
+	border-radius: 15px;
+}
+
+.update-time {
+	text-align: center;
+	margin-top: 15px;
+	margin-bottom: 30px;
+}
