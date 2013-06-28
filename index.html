@@ -229,6 +229,7 @@
 				data = psiSeries[1]['data'];
 				psi3_last = data[ data.length - 1 ];
 				$('#psi3hr').html(psi3_last[1]);
+				setPSIColor( '#psi3hr', psi3_last[1] );
 
 				//initialize 3 hour PSI update time
 				var psi3_update = new Date( psi3_last[0] );
@@ -257,6 +258,7 @@
 
 							//also update PSI display field
 							$('#psi3hr').html( newpsi );
+							setPSIColor( '#psi3hr', newpsi );
 
 							if ( newpsi > oldpsi ) {
 								transitionUp( '#psi3hr' );	
@@ -317,6 +319,25 @@
 						}
 					});
 				}
+			}
+
+			//set CSS class depending on the PSI value
+			function setPSIColor( elementName, psiValue ) {
+				//clear existing colour
+				$(elementName).removeClass("psi-good psi-moderate psi-unhealthy psi-very-unhealthy psi-hazardous");
+
+				if ( psiValue <= 50 )
+					psiClass = "psi-good";
+				else if ( psiValue <= 100 )
+					psiClass = "psi-moderate";
+				else if ( psiValue <= 200 )
+					psiClass = "psi-unhealthy";
+				else if ( psiValue <= 300 )
+					psiClass = "psi-very-unhealthy";
+				else
+					psiClass = "psi-hazardous";
+
+				$(elementName).addClass( psiClass );
 			}
 
 			// flash red when value goes up

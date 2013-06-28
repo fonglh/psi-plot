@@ -15,3 +15,24 @@
 	margin-top: 15px;
 	margin-bottom: 30px;
 }
+
+.psi-good {
+	background-color: rgba(0, 255, 0, 0.7);
+}
+
+.psi-moderate {
+	background-color: rgba(128, 255, 0, 0.7);
+}
+
+.psi-unhealthy {
+	background-color: rgba(255, 255, 0, 0.7);
+}
+
+.psi-very-unhealthy {
+	background-color: rgba(255, 128, 0, 0.7);
+}
+
+.psi-hazardous {
+	background-color: rgba(255, 0, 0, 0.7);
+}
+
