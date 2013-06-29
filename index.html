@@ -229,7 +229,8 @@
 				data = psiSeries[1]['data'];
 				psi3_last = data[ data.length - 1 ];
 				$('#psi3hr').html(psi3_last[1]);
-				setPSIColor( '#psi3hr', psi3_last[1] );
+				setPSIColor( '#psi-display', psi3_last[1] );
+				$('#descriptor').html( getPSIDescriptor(psi3_last[1]) );
 
 				//initialize 3 hour PSI update time
 				var psi3_update = new Date( psi3_last[0] );
@@ -258,6 +259,9 @@
 
 							//also update PSI display field
 							$('#psi3hr').html( newpsi );
+							
+							//update PSI descriptor
+							$('#descriptor').html( getPSIDescriptor( newpsi ) );
 
 							//animation effects
 							if ( newpsi > oldpsi ) {
@@ -270,7 +274,7 @@
 								transitionEqual( '#psi3hr' );
 							}
 
-							setPSIColor( '#psi3hr', newpsi );
+							setPSIColor( '#psi-display', newpsi );
 
 							//update PSI update time field
 							var psi3_update = new Date( data[0] );
@@ -342,6 +346,20 @@
 				$(elementName).addClass( psiClass );
 			}
 
+			// get air quality descriptor based on the PSI value	
+			function getPSIDescriptor( psiValue ) {
+				if ( psiValue <= 50 )
+					return "Good";
+				else if ( psiValue <= 100 )
+					return "Moderate";
+				else if ( psiValue <= 200 )
+					return "Unhealthy";
+				else if ( psiValue <= 300 )
+					return "Very Unhealthy";
+				else
+					return "Hazardous";
+			}
+
 			// flash red when value goes up
 			function transitionUp( elementName ) {
 				transition( elementName, '#f00' );
@@ -380,8 +398,10 @@
 						<h5 class="span6 text-center">3 hour PSI</h5>
 					</div>
 					<div class="row">
-							<h1 class="span2 offset2 reading" id="psi3hr"></h1>
-							<br/>
+							<div class="span2 offset2" id="psi-display">
+							<h1 class="reading" id="psi3hr"></h1>
+							<h4 class="text-center" id="descriptor"></h4>
+							</div>
 					</div>
 					<div class="row">
 						<p class="span6 update-time" id="psi3hr-update-time"></p>
@@ -409,16 +429,6 @@
 			<div class="row">
 				<div class="span6" id="psi_container" style="height:400px;"></div>
 				<div class="span6" id="pm25_container" style="height:400px;"></div>
-			</div>
-
-			<!-- NEA Sumatra hotspot graph -->
-			<div class="row">
-				<div class="span12 .text-center">
-					<a href="http://haze.gov.sg/data/dt/xml/Warning_Advisory/hotspotcounts.jpg">
-						<img class="img-center" src="http://haze.gov.sg/data/dt/xml/Warning_Advisory/hotspotcounts.jpg" alt="Next 24 Hour Forecast" title="Next 24 Hour Forecast" />
-					</a> <br/> 
-					<a href="http://haze.gov.sg/">Source: NEA</a>
-				</div>
 			</div>
 
 		</div>
