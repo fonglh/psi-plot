@@ -141,7 +141,7 @@
 				pm25aqi = AQIPM25( data[1] );
 				$('#pm25-aqi').html( pm25aqi );
 				$('#pm25-descriptor').html( AQICategory( pm25aqi ) ); 
-				setAQIColor( '#pm25-display', pm25aqi );
+				setIndexColor( '#pm25-display', pm25aqi );
 			});
 		
 			function createPSIChart() {
@@ -244,7 +244,7 @@
 				data = psiSeries[1]['data'];
 				psi3_last = data[ data.length - 1 ];
 				$('#psi3hr').html(psi3_last[1]);
-				setPSIColor( '#psi-display', psi3_last[1] );
+				setIndexColor( '#psi-display', psi3_last[1] );
 				$('#psi-descriptor').html( getPSIDescriptor(psi3_last[1]) );
 
 				//initialize 3 hour PSI update time
@@ -289,7 +289,7 @@
 								transitionEqual( '#psi3hr' );
 							}
 
-							setPSIColor( '#psi-display', newpsi );
+							setIndexColor( '#psi-display', newpsi );
 
 							//update PSI update time field
 							var psi3_update = new Date( data[0] );
@@ -347,7 +347,7 @@
 					$.getJSON('http://cosine.dyndns-web.com/psi/psijson.php?query=pm25-lastavg&callback=?', function( data ) {
 						pm25aqi = AQIPM25( data[1] );
 						$('#pm25-aqi').html( pm25aqi );
-						setAQIColor( '#pm25-display', pm25aqi );
+						setIndexColor( '#pm25-display', pm25aqi );
 						$('#pm25-descriptor').html( AQICategory( pm25aqi ) ); 
 					});
 				}

@@ -95,67 +95,47 @@ function AQICategory(AQIndex)
 	return AQICategory;
 }
 
-//set css class depending on the AQI value
-function setAQIColor( elementName, aqiValue ) {
+//set css class depending on the PSI/AQI value
+function setIndexColor( elementName, indexValue ) {
 	//clear existing colour
-	$(elementName).removeClass("aqi-good aqi-moderate aqi-sensitive-unhealthy aqi-unhealthy aqi-very-unhealthy aqi-hazardous");
+	$(elementName).removeClass("index-good index-moderate index-sensitive-unhealthy index-unhealthy index-very-unhealthy index-hazardous");
 
-	var AQI=parseFloat(aqiValue)
-	var aqiClass;
-	if (AQI<=50)
+	var index=parseFloat(indexValue)
+	var indexClass;
+	if (index<=50)
 	{
-		aqiClass="aqi-good";
+		indexClass="index-good";
 	}
-	else if (AQI>50 && AQI<=100)
+	else if (index>50 && index<=100)
 	{
-		aqiClass="aqi-moderate";
+		indexClass="index-moderate";
 	}
-	else if (AQI>100 && AQI<=150)
+	else if (index>100 && index<=150)
 	{
-		aqiClass="aqi-sensitive-unhealthy";
+		indexClass="index-sensitive-unhealthy";
 	}
-	else if (AQI>150 && AQI<=200)
+	else if (index>150 && index<=200)
 	{
-		aqiClass="aqi-unhealthy";
+		indexClass="index-unhealthy";
 	}
-	else if (AQI>200 && AQI<=300)
+	else if (index>200 && index<=300)
 	{
-		aqiClass="aqi-very-unhealthy";
+		indexClass="index-very-unhealthy";
 	}
-	else if (AQI>300 && AQI<=400)
+	else if (index>300 && index<=400)
 	{
-		aqiClass="aqi-hazardous";
+		indexClass="index-hazardous";
 	}
-	else if (AQI>400 && AQI<=500)
+	else if (index>400 && index<=500)
 	{
-		aqiClass="aqi-hazardous";
+		indexClass="index-hazardous";
 	}
 	else
 	{
-		aqiClass="Out of Range";
+		indexClass="Out of Range";
 	}
 
-	$(elementName).addClass( aqiClass );
-}
-
-
-//set CSS class depending on the PSI value
-function setPSIColor( elementName, psiValue ) {
-	//clear existing colour
-	$(elementName).removeClass("psi-good psi-moderate psi-unhealthy psi-very-unhealthy psi-hazardous");
-
-	if ( psiValue <= 50 )
-		psiClass = "psi-good";
-	else if ( psiValue <= 100 )
-		psiClass = "psi-moderate";
-	else if ( psiValue <= 200 )
-		psiClass = "psi-unhealthy";
-	else if ( psiValue <= 300 )
-		psiClass = "psi-very-unhealthy";
-	else
-		psiClass = "psi-hazardous";
-
-	$(elementName).addClass( psiClass );
+	$(elementName).addClass( indexClass );
 }
 
 // get air quality descriptor based on the PSI value	
