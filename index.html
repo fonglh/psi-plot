@@ -129,6 +129,14 @@
 				$('#pm25-update-time').html( 'At ' + pm25_update.format('ga \\o\\n d M Y') );
 
 			});
+
+			//update last PM2.5 average value
+			$.getJSON('http://cosine.dyndns-web.com/psi/psijson.php?query=pm25-lastavg&callback=?', function( data ) {
+				pm25aqi = AQIPM25( data[1] );
+				$('#pm25-aqi').html( pm25aqi );
+				$('#pm25-descriptor').html( AQICategory( pm25aqi ) ); 
+				setAQIColor( '#pm25-display', pm25aqi );
+			});
 		
 			function createPSIChart() {
 				psichart = new Highcharts.StockChart({
@@ -326,9 +334,12 @@
 						}
 					});
 
-					//get last PM2.5 average value
+					//update last PM2.5 average value
 					$.getJSON('http://cosine.dyndns-web.com/psi/psijson.php?query=pm25-lastavg&callback=?', function( data ) {
-
+						pm25aqi = AQIPM25( data[1] );
+						$('#pm25-aqi').html( pm25aqi );
+						setAQIColor( '#pm25-display', pm25aqi );
+						$('#pm25-descriptor').html( AQICategory( pm25aqi ) ); 
 					});
 				}
 			}
@@ -371,9 +382,9 @@
 						<h5 class="span6 text-center">3 hour PSI</h5>
 					</div>
 					<div class="row">
-							<div class="span2 offset2" id="psi-display">
-							<h1 class="reading" id="psi3hr"></h1>
-							<h4 class="text-center" id="psi-descriptor"></h4>
+							<div class="span4 offset1" id="psi-display">
+								<h1 class="reading" id="psi3hr"></h1>
+								<h4 class="text-center" id="psi-descriptor"></h4>
 							</div>
 					</div>
 					<div class="row">
@@ -388,13 +399,12 @@
 						<h5 class="span6 text-center">24 hour PM2.5 Concentration</h5>
 					</div>
 					<div class="row">
-						<div class="span6" id="pm25-display">
-						<h1 class="span6 reading" id="pm25-aqi"></h1>
-						<h4 class="text-center" id="pm25-descriptor"></h4>
+						<div class="span4 offset1" id="pm25-display">
+							<h1 class="reading" id="pm25-aqi"></h1>
+							<h4 class="text-center" id="pm25-descriptor"></h4>
 						</div>
 					</div>
 					<div class="row">
-						<p class="span6 text-center" id="pm25-conc"></p>
 						<p class="span6 update-time" id="pm25-update-time"></p>
 						<br/>
 					</div>

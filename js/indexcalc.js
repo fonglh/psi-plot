@@ -59,7 +59,7 @@ function AQIPM25(Concentration)
 function AQICategory(AQIndex)
 {
 	var AQI=parseFloat(AQIndex)
-		var AQICategory;
+	var AQICategory;
 	if (AQI<=50)
 	{
 		AQICategory="Good";
@@ -93,6 +93,49 @@ function AQICategory(AQIndex)
 		AQICategory="Out of Range";
 	}
 	return AQICategory;
+}
+
+//set css class depending on the AQI value
+function setAQIColor( elementName, aqiValue ) {
+	//clear existing colour
+	$(elementName).removeClass("aqi-good aqi-moderate aqi-sensitive-unhealthy aqi-unhealthy aqi-very-unhealthy aqi-hazardous");
+
+	var AQI=parseFloat(aqiValue)
+	var aqiClass;
+	if (AQI<=50)
+	{
+		aqiClass="aqi-good";
+	}
+	else if (AQI>50 && AQI<=100)
+	{
+		aqiClass="aqi-moderate";
+	}
+	else if (AQI>100 && AQI<=150)
+	{
+		aqiClass="aqi-sensitive-unhealthy";
+	}
+	else if (AQI>150 && AQI<=200)
+	{
+		aqiClass="aqi-unhealthy";
+	}
+	else if (AQI>200 && AQI<=300)
+	{
+		aqiClass="aqi-very-unhealthy";
+	}
+	else if (AQI>300 && AQI<=400)
+	{
+		aqiClass="aqi-hazardous";
+	}
+	else if (AQI>400 && AQI<=500)
+	{
+		aqiClass="aqi-hazardous";
+	}
+	else
+	{
+		aqiClass="Out of Range";
+	}
+
+	$(elementName).addClass( aqiClass );
 }
 
 
