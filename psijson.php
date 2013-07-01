@@ -199,6 +199,38 @@ else if ( $query === 'pm25-last' )
 	$pm25_last_arr = array( floatval($pm25_last[ 'timestamp' ] . "000"), intval($pm25_last[ 'min' ]), intval($pm25_last[ 'max' ]) );
 	$json = json_encode( $pm25_last_arr );
 }
+else if ( $query === 'pm25-lastavg' )
+{
+	//get PM2.5 readings
+	$c_readings = $db -> selectCollection( $dbname, "psi_24hr_pm25" );
+
+	$aggregate_ops = array(
+			array(
+				'$group' => array(
+					"_id" => '$timestamp',
+					"avg" => array('$avg'=>'$pm25'),
+					)
+				),
+			array(
+				'$project' => array(
+					"timestamp" => '$_id',
+					'_id' => 0,
+					"avg" => 1,
+					)
+				),
+			array(
+				'$sort' => array(
+					'timestamp' => 1
+					)
+				)
+			);
+
+	$pm25_data = $c_readings -> aggregate( $aggregate_ops );
+	$pm25_data = $pm25_data[ 'result' ];
+	$pm25_last = array_pop( $pm25_data );
+	$pm25_last_arr = array( floatval($pm25_last[ 'timestamp' ] . "000"), floatval($pm25_last[ 'avg' ]) );
+	$json = json_encode( $pm25_last_arr );
+}
 
 header( 'Content-Type: text/javascript' );
 echo "$callback($json);";

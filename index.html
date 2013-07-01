@@ -12,6 +12,7 @@
 		<script src="js/highcharts-more.js"></script>
 		<script src="js/bootstrap.min.js"></script>
 		<script src="js/dateformat.min.js"></script>
+		<script src="js/indexcalc.js"></script>
 
 		<script>
 		$(function() {
@@ -119,9 +120,9 @@
 					]
 				});
 
-				//initialize PM2.5 display field with latest value
+				//initialize PM2.5 concentration display field with latest value
 				pm25_last = data[ data.length - 1 ];
-				$('#pm25').html(pm25_last[1] + "-" + pm25_last[2] + " (&micro;g/m<sup>3</sup>)");
+				$('#pm25-conc').html(pm25_last[1] + "-" + pm25_last[2] + " (&micro;g/m<sup>3</sup>)");
 
 				//initialize PM2.5 update time field
 				var pm25_update = new Date( pm25_last[0] );
@@ -230,7 +231,7 @@
 				psi3_last = data[ data.length - 1 ];
 				$('#psi3hr').html(psi3_last[1]);
 				setPSIColor( '#psi-display', psi3_last[1] );
-				$('#descriptor').html( getPSIDescriptor(psi3_last[1]) );
+				$('#psi-descriptor').html( getPSIDescriptor(psi3_last[1]) );
 
 				//initialize 3 hour PSI update time
 				var psi3_update = new Date( psi3_last[0] );
@@ -261,7 +262,7 @@
 							$('#psi3hr').html( newpsi );
 							
 							//update PSI descriptor
-							$('#descriptor').html( getPSIDescriptor( newpsi ) );
+							$('#psi-descriptor').html( getPSIDescriptor( newpsi ) );
 
 							//animation effects
 							if ( newpsi > oldpsi ) {
@@ -317,49 +318,21 @@
 							seriespm25.addPoint( data, true, true );
 
 							//also update PM2.5 display field
-							$('#pm25').html( data[1] + "-" + data[2] + " (&micro;g/m<sup>3</sup>)");
+							$('#pm25-conc').html( data[1] + "-" + data[2] + " (&micro;g/m<sup>3</sup>)");
 
 							//update PM2.5 update time field
 							var pm25_update = new Date( data[0] );
 							$('#pm25-update-time').html( 'At ' + pm25_update.format('ga \\o\\n d M Y') );
 						}
 					});
+
+					//get last PM2.5 average value
+					$.getJSON('http://cosine.dyndns-web.com/psi/psijson.php?query=pm25-lastavg&callback=?', function( data ) {
+
+					});
 				}
 			}
-
-			//set CSS class depending on the PSI value
-			function setPSIColor( elementName, psiValue ) {
-				//clear existing colour
-				$(elementName).removeClass("psi-good psi-moderate psi-unhealthy psi-very-unhealthy psi-hazardous");
-
-				if ( psiValue <= 50 )
-					psiClass = "psi-good";
-				else if ( psiValue <= 100 )
-					psiClass = "psi-moderate";
-				else if ( psiValue <= 200 )
-					psiClass = "psi-unhealthy";
-				else if ( psiValue <= 300 )
-					psiClass = "psi-very-unhealthy";
-				else
-					psiClass = "psi-hazardous";
-
-				$(elementName).addClass( psiClass );
-			}
-
-			// get air quality descriptor based on the PSI value	
-			function getPSIDescriptor( psiValue ) {
-				if ( psiValue <= 50 )
-					return "Good";
-				else if ( psiValue <= 100 )
-					return "Moderate";
-				else if ( psiValue <= 200 )
-					return "Unhealthy";
-				else if ( psiValue <= 300 )
-					return "Very Unhealthy";
-				else
-					return "Hazardous";
-			}
-
+			
 			// flash red when value goes up
 			function transitionUp( elementName ) {
 				transition( elementName, '#f00' );
@@ -400,7 +373,7 @@
 					<div class="row">
 							<div class="span2 offset2" id="psi-display">
 							<h1 class="reading" id="psi3hr"></h1>
-							<h4 class="text-center" id="descriptor"></h4>
+							<h4 class="text-center" id="psi-descriptor"></h4>
 							</div>
 					</div>
 					<div class="row">
@@ -415,10 +388,13 @@
 						<h5 class="span6 text-center">24 hour PM2.5 Concentration</h5>
 					</div>
 					<div class="row">
-						<h1 class="span6 reading" id="pm25"></h1>
-						<br/>
+						<div class="span6" id="pm25-display">
+						<h1 class="span6 reading" id="pm25-aqi"></h1>
+						<h4 class="text-center" id="pm25-descriptor"></h4>
+						</div>
 					</div>
 					<div class="row">
+						<p class="span6 text-center" id="pm25-conc"></p>
 						<p class="span6 update-time" id="pm25-update-time"></p>
 						<br/>
 					</div>
