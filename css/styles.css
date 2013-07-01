@@ -43,6 +43,31 @@
 	background-color: rgba(255, 0, 0, 0.7);
 }
 
+.aqi-good {
+	background-color: rgba(0, 228, 0, 0.7);
+}
+
+.aqi-moderate {
+	background-color: rgba(255, 255, 0, 0.7);
+}
+
+.aqi-sensitive-unhealthy {
+	background-color: rgba(255, 126, 0, 0.7);
+}
+
+.aqi-unhealthy {
+	background-color: rgba(255, 0, 0, 0.7);
+}
+
+.aqi-very-unhealthy {
+	background-color: rgba(153, 0, 76, 0.7);
+}
+
+.aqi-hazardous {
+	background-color: rgba(126, 0, 35, 0.7);
+}
+
+
 .img-center {
 	display: block;
 	margin-left: auto;

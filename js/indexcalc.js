@@ -5,7 +5,6 @@
  *
  */
 
-
 function Linear(AQIhigh, AQIlow, Conchigh, Conclow, Concentration)
 {
 	var linear;
@@ -55,6 +54,45 @@ function AQIPM25(Concentration)
 		AQI="Out of Range";
 	}
 	return AQI;
+}
+
+function AQICategory(AQIndex)
+{
+	var AQI=parseFloat(AQIndex)
+		var AQICategory;
+	if (AQI<=50)
+	{
+		AQICategory="Good";
+	}
+	else if (AQI>50 && AQI<=100)
+	{
+		AQICategory="Moderate";
+	}
+	else if (AQI>100 && AQI<=150)
+	{
+		AQICategory="Unhealthy (Sensitive Groups)";
+	}
+	else if (AQI>150 && AQI<=200)
+	{
+		AQICategory="Unhealthy";
+	}
+	else if (AQI>200 && AQI<=300)
+	{
+		AQICategory="Very Unhealthy";
+	}
+	else if (AQI>300 && AQI<=400)
+	{
+		AQICategory="Hazardous";
+	}
+	else if (AQI>400 && AQI<=500)
+	{
+		AQICategory="Hazardous";
+	}
+	else
+	{
+		AQICategory="Out of Range";
+	}
+	return AQICategory;
 }
 
 
