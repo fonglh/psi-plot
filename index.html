@@ -124,6 +124,12 @@
 				pm25_last = data[ data.length - 1 ];
 				$('#pm25-conc').html(pm25_last[1] + "-" + pm25_last[2] + " (&micro;g/m<sup>3</sup>)");
 
+				$('#pm25-display').tooltip({ 
+												title: pm25_last[1] + "-" + pm25_last[2] + " (&micro;g/m<sup>3</sup>)",
+												html: true,
+												placement: 'bottom'
+										});
+
 				//initialize PM2.5 update time field
 				var pm25_update = new Date( pm25_last[0] );
 				$('#pm25-update-time').html( 'At ' + pm25_update.format('ga \\o\\n d M Y') );
@@ -328,6 +334,9 @@
 							//also update PM2.5 display field
 							$('#pm25-conc').html( data[1] + "-" + data[2] + " (&micro;g/m<sup>3</sup>)");
 
+							//update tooltip
+							$('#pm25-display').attr('title', data[1] + "-" + data[2] + " (&micro;g/m<sup>3</sup>)").tooltip('fixTitle');
+
 							//update PM2.5 update time field
 							var pm25_update = new Date( data[0] );
 							$('#pm25-update-time').html( 'At ' + pm25_update.format('ga \\o\\n d M Y') );
@@ -367,7 +376,7 @@
 							}, 1000);
 				$(elementName).animate( { color: origColor }, 1000 );
 			}
-
+			
 		});
 		</script>
 
