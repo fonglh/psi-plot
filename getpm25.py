@@ -98,18 +98,18 @@ if dtnow < dt_nxtCheck:
 
 # both 24 hour PSI readings and 24 hour PM2.5 readings must be in before
 # this script will insert the entry into the database
-f = urllib.urlopen("http://app2.nea.gov.sg/anti-pollution-radiation-protection/air-pollution/psi/psi-readings-over-the-last-24-hours")
+f = urllib.urlopen("http://www.haze.gov.sg/haze-update/past-24-hour-psi-reading.aspx")
 psihtml = f.read()
 
 # find start of 24 hour PSI table
-start_psi = psihtml.find("<h1>24-hr PSI Readings from 12AM to 11.59PM on")
+start_psi = psihtml.find("24-hr PSI Readings from 12AM to 11.59PM on")
 psihtml = psihtml[start_psi:]
 
 psi24_table = extractTableData( psihtml )
 
 
 # find start of 24 hour PM2.5 table
-start_psi = psihtml.find("<h1>24-hr PM2.5 Concentration from 12AM to 11.59PM on")
+start_psi = psihtml.find("<h1>24-hr PM2.5 Concentration")
 psihtml = psihtml[start_psi:]
 
 pm25_table = extractTableData( psihtml )
