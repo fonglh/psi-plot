@@ -83,6 +83,46 @@
 							text: 'Concentration (&micro;g/m<sup>3</sup>)',
 							useHTML: true
 						},
+
+						plotBands: [
+						{
+							from: 0,
+							to: 12,
+							color: 'rgba(0, 228, 0, 0.7)',
+							label: { text: 'Good' }
+						},
+						{
+							from: 12.1,
+							to: 35.4,
+							color: 'rgba(255, 255, 0, 0.7)',
+							label: { text: 'Moderate' }
+						},
+						{
+							from: 35.5,
+							to: 55.4,
+							color: 'rgba(255, 126, 0, 0.7)',
+							label: { text: 'Unhealthy (Sensitive Groups)' }
+						},
+						{
+							from: 55.5,
+							to: 150.4,
+							color: 'rgba(255, 0, 0, 0.7)',
+							label: { text: 'Unhealthy' }
+						},
+						{
+							from: 150.5,
+							to: 250.4,
+							color: 'rgba(153, 0, 76, 0.7)',
+							label: { text: 'Very unhealthy' }
+						},
+						{
+							from: 250.5,
+							to: 500.5,
+							color: 'rgba(126, 0, 35, 0.7)',
+							label: { text: 'Hazardous' }
+						}
+						]
+
 					},
 
 					rangeSelector: {
