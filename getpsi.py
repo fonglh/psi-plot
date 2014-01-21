@@ -41,7 +41,7 @@ if dtnow < dt_nxtCheck:
 	exit(0)
 
 
-f = urllib.urlopen("http://app2.nea.gov.sg/anti-pollution-radiation-protection/air-pollution/psi/psi-readings-over-the-last-24-hours")
+f = urllib.urlopen("http://www.haze.gov.sg/haze-update/past-24-hour-psi-reading.aspx")
 psihtml = f.read()
 
 #find start of PSI reading table
