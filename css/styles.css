@@ -34,7 +34,7 @@
 .update-time {
 	text-align: center;
 	margin-top: 15px;
-	margin-bottom: 30px;
+	margin-bottom: 15px;
 }
 
 .index-good {
@@ -82,6 +82,6 @@ body {
 	left: 0;
 	height: 100%;
 	width: 100%;
-	background-color: #777777;
+	background-color: #888;
 	z-index: -1;
 }

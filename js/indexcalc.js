@@ -154,6 +154,18 @@ function getPSIDescriptor( psiValue ) {
 
 // convert PSI to an opacity value
 function getOpacity( psiValue ) {
-	return psiValue/100;
+	opacity = 0;
+	if ( psiValue <= 50 )	//0-0.3 for PSI 0-50
+		opacity = 0.3/50 * psiValue;
+	else if ( psiValue <= 100 )	//0.3-0.6 for PSI 50-100
+		opacity = 0.3 + 0.3/50 * (psiValue - 50);
+	else if ( psiValue <= 200 )	//0.6-0.8 for PSI 100-200
+		opacity = 0.6 + 0.2/100 * (psiValue - 100);
+	else if ( psiValue <= 350 )	//0.8-0.9 for PSI 200-350
+		opacity = 0.8 + 0.1/150 * (psiValue - 200);
+	else
+		opacity = 0.9;
+
+	return opacity;
 }
 
