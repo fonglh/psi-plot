@@ -34,7 +34,7 @@
 			var pm25chart;
 
 			$.each( psi_names, function(i, name) {
-				$.getJSON('http://localhost/psi/psijson.php?query='+psijson_call[i] + '&callback=?', function( data ) {
+				$.getJSON('psijson.php?query='+psijson_call[i] + '&callback=?', function( data ) {
 					psiSeries[i] = {
 						name: name,
 						type: psi_chart_types[i],
@@ -52,7 +52,7 @@
 				});
 			});
 
-			$.getJSON('http://localhost/psi/psijson.php?query=pm25-all&callback=?', function( data ) {
+			$.getJSON('psijson.php?query=pm25-all&callback=?', function( data ) {
 				pm25chart = new Highcharts.StockChart({
 					chart: {
 						renderTo: 'pm25-container',
@@ -173,7 +173,7 @@
 			});
 
 			//update last PM2.5 average value
-			$.getJSON('http://localhost/psi/psijson.php?query=pm25-lastavg&callback=?', function( data ) {
+			$.getJSON('psijson.php?query=pm25-lastavg&callback=?', function( data ) {
 				pm25aqi = AQIPM25( data[1] );
 				$('#pm25-aqi').html( pm25aqi );
 				$('#pm25-descriptor').html( AQICategory( pm25aqi ) ); 
@@ -318,7 +318,7 @@
 
 				//only update if the time now is 1 hour after the latest value
 				if ( dt_now > dt_nxtCheck ) {
-					$.getJSON('http://localhost/psi/psijson.php?query=psi3hr-last&callback=?', function( data ) {
+					$.getJSON('psijson.php?query=psi3hr-last&callback=?', function( data ) {
 						if ( data[0] > dt_psi3hr.getTime() ) {
 							oldpsi = series3hr.yData[ series3hr.yData.length - 1 ];
 							newpsi = data[1];
@@ -358,7 +358,7 @@
 				dt_nxtCheck.setTime( dt_psi24hr.getTime() + ( 60 * 60 * 1000 ) );
 
 				if ( dt_now > dt_nxtCheck ) {
-					$.getJSON('http://localhost/psi/psijson.php?query=psi24hr-last&callback=?', function( data ) {
+					$.getJSON('psijson.php?query=psi24hr-last&callback=?', function( data ) {
 						if ( data[0] > dt_psi24hr.getTime() ) {
 							series24hrpsi.addPoint( data, true, true );
 						}
@@ -379,7 +379,7 @@
 
 				//only update if the time now is 1 hour after the latest value
 				if ( dt_now > dt_nxtCheck ) {
-					$.getJSON('http://localhost/psi/psijson.php?query=pm25-last&callback=?', function( data ) {
+					$.getJSON('psijson.php?query=pm25-last&callback=?', function( data ) {
 						seriespm25 = pm25chart.get( 'pm25' );
 						if ( data[0] > dt_pm25.getTime() ) {
 							seriespm25.addPoint( data, true, true );
@@ -394,7 +394,7 @@
 					});
 
 					//update last PM2.5 average value
-					$.getJSON('http://localhost/psi/psijson.php?query=pm25-lastavg&callback=?', function( data ) {
+					$.getJSON('psijson.php?query=pm25-lastavg&callback=?', function( data ) {
 						pm25aqi = AQIPM25( data[1] );
 						$('#pm25-aqi').html( pm25aqi );
 						setIndexColor( '#pm25-display', pm25aqi );
@@ -497,4 +497,14 @@
 		<div id="overlay">
 		</div>
 	</body>
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-41948383-1', 'fonglh.me');
+	  ga('send', 'pageview');
+
+	</script>
 </html>
