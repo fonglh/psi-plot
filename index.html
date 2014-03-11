@@ -13,6 +13,7 @@
 		<script src="js/bootstrap.min.js"></script>
 		<script src="js/dateformat.min.js"></script>
 		<script src="js/indexcalc.js"></script>
+		<script src="js/rainyday.js"></script>
 
 		<script>
 		$(function() {
@@ -428,6 +429,19 @@
 							}, 1000);
 				$(elementName).animate( { color: origColor }, 1000 );
 			}
+			var image = document.getElementById('background');
+                image.onload = function() {
+                    var engine = new RainyDay({
+                        image: this,
+                        blur: 0
+                    });
+                    engine.gravity = engine.GRAVITY_NON_LINEAR;
+                    engine.gravityAngle = 0;
+                    engine.rain([ [0, 2, 0.5],
+                        [4, 4, 1] ], 50);
+                };
+                image.crossOrigin = 'anonymous';
+                image.src = 'img/singapore.jpg';
 			
 		});
 		</script>
@@ -435,6 +449,7 @@
 	</head>
 
 	<body>
+		<img id="background" alt="background" src="" />
 		<div class="container">
 			<div class="row">
 				<!-- PSI data -->
