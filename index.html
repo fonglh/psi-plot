@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
 		<title>Singapore PSI Readings</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
-		<link href="css/bootstrap-responsive.min.css" rel="stylesheet">
 		<link href="css/styles.css" rel="stylesheet">
 		<script src="js/jquery-1.11.0.min.js"></script>
 		<script src="js/jqueryui/1.10.4/jquery-ui.min.js"></script>
@@ -438,35 +437,35 @@
 		<div class="container">
 			<div class="row">
 				<!-- PSI data -->
-				<div class="span6">
+				<div class="col-lg-6">
 					<div class="row">
-						<h5 class="span6 text-center">3 hour PSI</h5>
+						<h4 class="text-center"><strong>3 hour PSI</strong></h4>
 					</div>
 					<div class="row">
-							<div class="span4 offset1" id="psi-display">
+							<div class="col-lg-8 col-lg-offset-2" id="psi-display">
 								<h1 class="reading" id="psi3hr"></h1>
 								<h4 class="text-center" id="psi-descriptor"></h4>
 							</div>
 					</div>
 					<div class="row">
-						<p class="span6 update-time" id="psi3hr-update-time"></p>
+						<p class="update-time" id="psi3hr-update-time"></p>
 						<br/>
 					</div>
 				</div>
 
 				<!-- PM2.5 data -->
-				<div class="span6">
+				<div class="col-lg-6">
 					<div class="row">
-						<h5 class="span6 text-center">24 hour AQI (based on PM2.5)</h5>
+						<h4 class="text-center"><strong>24 hour AQI (based on PM2.5)</strong></h4>
 					</div>
 					<div class="row">
-						<div class="span4 offset1" id="pm25-display">
+						<div class="col-lg-8 col-lg-offset-2" id="pm25-display">
 							<h1 class="reading" id="pm25-aqi"></h1>
 							<h4 class="text-center" id="pm25-descriptor"></h4>
 						</div>
 					</div>
 					<div class="row">
-						<p class="span6 update-time" id="pm25-update-time"></p>
+						<p class="update-time" id="pm25-update-time"></p>
 						<br/>
 					</div>
 				</div>
@@ -474,8 +473,8 @@
 
 			<!-- graphs --> 
 			<div class="row">
-				<div class="span6 highcharts" id="psi-container" style="height:400px;"></div>
-				<div class="span6 highcharts" id="pm25-container" style="height:400px;"></div>
+				<div class="col-lg-6 highcharts" id="psi-container" style="height:400px;"></div>
+				<div class="col-lg-6 highcharts" id="pm25-container" style="height:400px;"></div>
 			</div>
 
 		</div>
