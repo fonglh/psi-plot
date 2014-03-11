@@ -70,10 +70,10 @@
 }
 
 body {
-	background-image: url("../img/singapore.jpg");
+	background-image: url("../img/singapore2.jpg");
 	background-size: cover;
 	background-repeat: no-repeat;
-	background-position: 0px -120px;
+	/*background-position: 0px -120px;*/
 }
 
 #overlay {
