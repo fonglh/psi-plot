@@ -167,7 +167,7 @@
 
 				//initialize PM2.5 update time field
 				var pm25_update = new Date( pm25_last[0] );
-				$('#pm25-update-time').html( 'At ' + pm25_update.format('ga \\o\\n d M Y') );
+				$('#pm25-update-time').html( 'At ' + pm25_update.format('ga \\o\\n d M Y') );				
 
 			});
 
@@ -298,6 +298,9 @@
 				//initialize 3 hour PSI update time
 				var psi3_update = new Date( psi3_last[0] );
 				$('#psi3hr-update-time').html( 'At ' + psi3_update.format('ga \\o\\n d M Y') );
+
+				//set overlay opacity
+				$('#overlay').css( "opacity", psi3_last[1]/100 );
 			}
 
 
@@ -342,6 +345,7 @@
 							//update PSI update time field
 							var psi3_update = new Date( data[0] );
 							$('#psi3hr-update-time').html( 'At ' + psi3_update.format('ga \\o\\n d M Y') );
+							$('#overlay').css( "opacity", newpsi/100 );
 						}
 					});
 				}
