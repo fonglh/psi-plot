@@ -69,11 +69,16 @@
 	width: 700px;
 }
 
-body {
-	background-image: url("../img/singapore2.jpg");
-	background-size: cover;
-	background-repeat: no-repeat;
-	/*background-position: 0px -120px;*/
+#background-carousel {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+}
+
+.carousel-control {
+	z-index: 1;
 }
 
 #overlay {
@@ -83,5 +88,4 @@ body {
 	height: 100%;
 	width: 100%;
 	background-color: #888;
-	z-index: -1;
 }
