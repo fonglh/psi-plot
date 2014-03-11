@@ -152,4 +152,8 @@ function getPSIDescriptor( psiValue ) {
 		return "Hazardous";
 }
 
+// convert PSI to an opacity value
+function getOpacity( psiValue ) {
+	return psiValue/100;
+}
 

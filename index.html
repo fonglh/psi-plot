@@ -300,7 +300,7 @@
 				$('#psi3hr-update-time').html( 'At ' + psi3_update.format('ga \\o\\n d M Y') );
 
 				//set overlay opacity
-				$('#overlay').css( "opacity", psi3_last[1]/100 );
+				$('#overlay').css( "opacity", getOpacity(psi3_last[1]) );
 			}
 
 
@@ -345,7 +345,7 @@
 							//update PSI update time field
 							var psi3_update = new Date( data[0] );
 							$('#psi3hr-update-time').html( 'At ' + psi3_update.format('ga \\o\\n d M Y') );
-							$('#overlay').css( "opacity", newpsi/100 );
+							$('#overlay').css( "opacity", getOpacity(newpsi) );
 						}
 					});
 				}
