@@ -427,6 +427,12 @@
 							}, 1000);
 				$(elementName).animate( { color: origColor }, 1000 );
 			}
+
+			$('#chart-toggle').on('click', function() {
+				var textNode = this.lastChild;
+				//the if-else conditional seems reversed because it's checked before the state change from hidden->shown and vice versa
+				textNode.nodeValue = ($('#highcharts').hasClass('in') ? 'Show' : 'Hide' ) + ' charts';
+			});
 			
 		});
 		</script>
@@ -471,8 +477,13 @@
 				</div>
 			</div>
 
-			<!-- graphs --> 
 			<div class="row">
+				<button type="button" class="btn-lg btn-info col-lg-6 col-lg-offset-3" data-toggle="collapse" data-target="#highcharts" id="chart-toggle">
+  					Hide Charts
+				</button>
+			</div>
+			<!-- graphs --> 
+			<div class="row collapse in" id="highcharts">
 				<div class="col-lg-6 highcharts" id="psi-container" style="height:400px;"></div>
 				<div class="col-lg-6 highcharts" id="pm25-container" style="height:400px;"></div>
 			</div>
