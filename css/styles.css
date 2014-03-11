@@ -70,8 +70,10 @@
 }
 
 body {
-	background-image: url("../img/newyorkcity.jpg");
+	background-image: url("../img/singapore.jpg");
 	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: 0px -120px;
 }
 
 #overlay {
