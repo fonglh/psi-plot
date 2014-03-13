@@ -159,10 +159,6 @@
 					]
 				});
 
-				//initialize PM2.5 concentration display field with latest value
-				pm25_last = data[ data.length - 1 ];
-				$('#pm25-conc').html(pm25_last[1] + "-" + pm25_last[2] + " (&micro;g/m<sup>3</sup>)");
-
 
 				//initialize PM2.5 update time field
 				var pm25_update = new Date( pm25_last[0] );
@@ -183,6 +179,9 @@
 												html: true,
 												placement: 'bottom'
 										});
+
+				//set overlay opacity from AQI value
+				$('#overlay').css( "opacity", getOpacity(pm25aqi) );
 			});
 		
 			function createPSIChart() {
@@ -298,8 +297,6 @@
 				var psi3_update = new Date( psi3_last[0] );
 				$('#psi3hr-update-time').html( 'At ' + psi3_update.format('ga \\o\\n d M Y') );
 
-				//set overlay opacity
-				$('#overlay').css( "opacity", getOpacity(psi3_last[1]) );
 			}
 
 
@@ -344,7 +341,6 @@
 							//update PSI update time field
 							var psi3_update = new Date( data[0] );
 							$('#psi3hr-update-time').html( 'At ' + psi3_update.format('ga \\o\\n d M Y') );
-							$('#overlay').css( "opacity", getOpacity(newpsi) );
 						}
 					});
 				}
@@ -382,9 +378,6 @@
 						if ( data[0] > dt_pm25.getTime() ) {
 							seriespm25.addPoint( data, true, true );
 
-							//also update PM2.5 display field
-							$('#pm25-conc').html( data[1] + "-" + data[2] + " (&micro;g/m<sup>3</sup>)");
-
 							//update PM2.5 update time field
 							var pm25_update = new Date( data[0] );
 							$('#pm25-update-time').html( 'At ' + pm25_update.format('ga \\o\\n d M Y') );
@@ -396,7 +389,10 @@
 						pm25aqi = AQIPM25( data[1] );
 						$('#pm25-aqi').html( pm25aqi );
 						setIndexColor( '#pm25-display', pm25aqi );
-						$('#pm25-descriptor').html( AQICategory( pm25aqi ) ); 
+						$('#pm25-descriptor').html( AQICategory( pm25aqi ) );
+
+						//update overlay opacity using AQI
+						$('#overlay').css( "opacity", getOpacity(pm25aqi) ); 
 
 						//update tooltip
 						$('#pm25-display').attr('title', "Avg: " + data[1] + " (&micro;g/m<sup>3</sup>)").tooltip('fixTitle');
