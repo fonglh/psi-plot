@@ -14,6 +14,11 @@ $callback = (string)$_GET[ 'callback' ];
 if (!$callback) $callback = 'callback';
 
 $query = (string)$_GET[ 'query' ];
+if ( isset( $_GET['region'] ) )
+{
+	$region = (string)$_GET[ 'region' ];
+}
+	
 
 try 
 {
@@ -164,6 +169,40 @@ else if ( $query === 'pm25-all' )
 		$pm25_arr[] = array( floatval($psi_reading[ 'timestamp' ] . "000"), intval($psi_reading[ 'min' ]), intval($psi_reading[ 'max' ]) );
 	}
 	$json = json_encode( $pm25_arr );
+}
+else if ( $query === 'pm25-region' && isset($region))
+{
+	//get PM2.5 readings by selected region
+	$c_readings = $db -> selectCollection( $dbname, "psi_24hr_pm25" );
+	
+	switch($region)
+	{
+		case "North":
+			$cursor = $c_readings->find(array('region' => 'North'));
+			break;
+		case "South":
+			$cursor = $c_readings->find(array('region' => 'South'));
+			break;
+		case "East":
+			$cursor = $c_readings->find(array('region' => 'East'));
+			break;
+		case "West":
+			$cursor = $c_readings->find(array('region' => 'West'));
+			break;
+		case "Central":
+			$cursor = $c_readings->find(array('region' => 'Central'));
+			break;
+	}
+	$cursor->sort( array('timestamp' => 1) );
+
+	$pm25_region_arr = array();
+
+	while ( $pm25_reading = $cursor -> getNext() )
+	{
+		$pm25_region_arr[] = array( floatval($pm25_reading[ 'timestamp' ] . "000"), intval($pm25_reading[ 'pm25' ]) );
+	}
+	
+	$json = json_encode( $pm25_region_arr );
 }
 else if ( $query === 'pm25-last' )
 {
