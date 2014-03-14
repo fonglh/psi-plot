@@ -170,7 +170,7 @@ else if ( $query === 'pm25-all' )
 	}
 	$json = json_encode( $pm25_arr );
 }
-else if ( $query === 'pm25-region' && isset($region))
+else if ( $query === 'pm25-region' && isset($region) )
 {
 	//get PM2.5 readings by selected region
 	$c_readings = $db -> selectCollection( $dbname, "psi_24hr_pm25" );
@@ -178,19 +178,19 @@ else if ( $query === 'pm25-region' && isset($region))
 	switch($region)
 	{
 		case "North":
-			$cursor = $c_readings->find(array('region' => 'North'));
+			$cursor = $c_readings->find( array('region' => 'North') );
 			break;
 		case "South":
-			$cursor = $c_readings->find(array('region' => 'South'));
+			$cursor = $c_readings->find( array('region' => 'South') );
 			break;
 		case "East":
-			$cursor = $c_readings->find(array('region' => 'East'));
+			$cursor = $c_readings->find( array('region' => 'East') );
 			break;
 		case "West":
-			$cursor = $c_readings->find(array('region' => 'West'));
+			$cursor = $c_readings->find( array('region' => 'West') );
 			break;
 		case "Central":
-			$cursor = $c_readings->find(array('region' => 'Central'));
+			$cursor = $c_readings->find( array('region' => 'Central') );
 			break;
 	}
 	$cursor->sort( array('timestamp' => 1) );
