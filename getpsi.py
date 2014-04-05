@@ -45,7 +45,8 @@ f = urllib.urlopen("http://www.haze.gov.sg/haze-update/past-24-hour-psi-reading.
 psihtml = f.read()
 
 #find start of PSI reading table
-start_psi = psihtml.find("<h1>3-hr PSI Readings from 12AM to 11.59PM on")
+start_psi = psihtml.find("<h1>3-hr PSI Readings from 1AM to 12:59AM on")
+
 psihtml = psihtml[start_psi:]
 
 #get current day from website to see if data has been updated just past midnight
@@ -69,11 +70,11 @@ psi_readings = re.findall(r'[\s>]([0-9-]{1,3})[\s<]', psihtml)
 
 
 # psi_readings is in the format [ 180, 230, 123, '-', '-' ]
-# each number is an hourly psi reading, starting from midnight
+# each number is an hourly psi reading, starting from 1am
 # unavailable readings are repsesented by a '-'
 
 # iterate through this array insert hourly data into the database
-hr = 0
+hr = 1
 for reading in psi_readings:
 	if reading.isdigit():
 		currdt = currdt.replace(hour=hr, minute=0, second=0, microsecond=0, tzinfo=GMT8())
