@@ -19,32 +19,30 @@ class GMT8(tzinfo):
 		return "GMT +8"
 
 # extract tabular PSI data from HTML and insert into table
-# assumes that the text 'Overall Singapore' appears at the end
-# of each 12 hour chunk of data
 # start from just before the day check, so the day check will be
 # done separately for each table
 # HTML will contain the <h1> heading of the table
-def extractTableData( html ):
-	table = [[0 for x in xrange(24)] for x in xrange(5)]
-	#get current day of 24 hour PSI readings
-	end_day = html.find('</h1>')
+def extract_table_data(html):
+	table = [['-' for x in xrange(24)] for x in xrange(5)]
 
+	#get current day of 24 hour PM2.5 readings
+	end_day = html.find('</h1>')
 	# dd MMM yyyy format
 	day = re.findall(r'([0-9]+) [A-Za-z]{3} \d{4}', html[:end_day])
 	day = int(day[0])
-
 	# quit as reading is not in yet
 	if day != dtnow.day:
 		exit(0)
+
 	# extract table (1st 12 hours)
 	start_table = html.find("<strong>North</strong>")
-	end_table = html.find("<strong>Overall Singapore</strong>", start_table)
+	end_table = html.find("<tr class=\"even\">", start_table)
+
 	# 12 hours of data from the table
 	table12 = html[start_table:end_table]
 
 	#get 24 hour PSI/PM2.5 values, including the blank ones, for 1st 12 hours
-	values = re.findall(r'[\s>]([0-9-]{1,3})[\s<]', table12)
-
+	values = re.findall(r'[\s>]([0-9-]{1,3})[\s<(]', table12)
 	ctr = 0
 	for value in values:
 		table[ctr/12][ctr%12] = value
@@ -52,18 +50,26 @@ def extractTableData( html ):
 
 	# extract table (2nd 12 hours)
 	start_table = html.find("<strong>North</strong>", end_table)
+
+	# the PSI 24 hour table HTML should end here or overall readings will mess up the regex
 	end_table = html.find("<strong>Overall Singapore</strong>", start_table)
+	# if "Overall Singapore" can't be found, this is the PM2.5 table
+	# find the closing '</table>' tag immediately
+	if end_table == -1:
+		end_table = html.find("</table>", start_table)
 	table12 = html[start_table:end_table]
 
-	#get 24 hour PSI/PM2.5 values, including the blank ones, for 2nd 12 hours
-	values = re.findall(r'[\s>]([0-9-]{1,3})[\s<]', table12)
+	#get 24 hour PSI or PM2.5, including the blank ones, for 2nd 12 hours
+	#PM2.5 values have equivalent PSI values in brackets, ignore them
+	# add an open bracket to the right side of the captured number to handle 
+	# the case where PM2.5 has equivalent PSI in brackets. e.g. 18(58)
+	values = re.findall(r'[\s>]([0-9-]{1,3})[\s<(]', table12)
 
 	ctr = 0
 	for value in values:
 		table[ctr/12][ctr%12 + 12] = value
 		ctr += 1
 	return table
-
 
 
 #array for regions used in NEA data
@@ -98,30 +104,37 @@ if dtnow < dt_nxtCheck:
 
 # both 24 hour PSI readings and 24 hour PM2.5 readings must be in before
 # this script will insert the entry into the database
+
+# get 24 hour PSI data
 f = urllib.urlopen("http://www.haze.gov.sg/haze-update/past-24-hour-psi-reading.aspx")
 psihtml = f.read()
 
 # find start of 24 hour PSI table
-start_psi = psihtml.find("24-hr PSI Readings from 12AM to 11.59PM on")
+start_psi = psihtml.find("24-hr PSI Readings from 1am to 12am on")
 psihtml = psihtml[start_psi:]
 
-psi24_table = extractTableData( psihtml )
+psi24_table = extract_table_data(psihtml)
 
-
+# get 24 hour PM2.5 data
 # find start of 24 hour PM2.5 table
-start_psi = psihtml.find("<h1>24-hr PM2.5 Concentration")
+f = urllib.urlopen("http://www.haze.gov.sg/haze-update/pollutant-concentrations/type/PM25.aspx")
+psihtml = f.read()
+start_psi = psihtml.find("24-hr PM<sub>2.5</sub> (")
 psihtml = psihtml[start_psi:]
-
-pm25_table = extractTableData( psihtml )
+pm25_table = extract_table_data(psihtml)
 
 
 #loop through hours in the day to get all the readings
-for hr in range(0, 24):
-	currdt = currdt.replace(hour=hr, minute=0, second=0, microsecond=0, tzinfo=GMT8())
+# use today's date, set hour, min, sec etc to 0
+# in each iteration, increase time by an hour
+datadt = currdt.replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=GMT8())
+delta = timedelta(hours=1)
+for hr in xrange(24):
+	datadt += delta
 
 	#only insert data if the timestamp is before the time now, there CAN'T be future data!!!
-	if currdt < dtnow:		
-		ts = int(time.mktime(currdt.timetuple()))
+	if datadt < dtnow:		
+		ts = int(time.mktime(datadt.timetuple()))
 
 		# go through all the regions
 		for region_num in range(0, 5):
@@ -135,7 +148,7 @@ for hr in range(0, 24):
 				region = REGIONS[region_num]
 
 				entry = { "timestamp": ts, "region": region, "psi_24": psi_24, "pm25": pm25 }
-				print entry
+				print datadt, entry
 				collection.update( { "timestamp": ts, "region": region }, entry, upsert=True )
 
 
