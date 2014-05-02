@@ -45,7 +45,7 @@ f = urllib.urlopen("http://www.haze.gov.sg/haze-update/past-24-hour-psi-reading.
 psihtml = f.read()
 
 #find start of PSI reading table
-start_psi = psihtml.find("<h1>3-hr PSI Readings from 1AM to 12:59AM on")
+start_psi = psihtml.find("<h1>3-hr PSI Readings from 1am to 12am on")
 
 psihtml = psihtml[start_psi:]
 
