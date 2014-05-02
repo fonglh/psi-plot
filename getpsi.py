@@ -72,16 +72,18 @@ psi_readings = re.findall(r'[\s>]([0-9-]{1,3})[\s<]', psihtml)
 # psi_readings is in the format [ 180, 230, 123, '-', '-' ]
 # each number is an hourly psi reading, starting from 1am
 # unavailable readings are repsesented by a '-'
-
 # iterate through this array insert hourly data into the database
-hr = 1
+
+# use today's date, set hour, min, sec etc to 0
+# in each iteration, increase time by an hour
+datadt = currdt.replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=GMT8())
+delta = timedelta(hours=1)
 for reading in psi_readings:
 	if reading.isdigit():
-		currdt = currdt.replace(hour=hr, minute=0, second=0, microsecond=0, tzinfo=GMT8())
+		datadt += delta
 		#only insert data if the timestamp is before the time now, there CAN'T be future data!!!
-		if currdt < dtnow:		
-			ts = int(time.mktime(currdt.timetuple()))
+		if datadt < dtnow:		
+			ts = int(time.mktime(datadt.timetuple()))
 			entry = { "timestamp": ts, "psi": reading }
 			collection.update( { "timestamp": ts}, entry, upsert=True )
-			print currdt, ts, int(reading)
-	hr += 1
+			print datadt, ts, int(reading)
