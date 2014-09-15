@@ -106,7 +106,7 @@ if dtnow < dt_nxtCheck:
 # this script will insert the entry into the database
 
 # get 24 hour PSI data
-f = urllib.urlopen("http://www.haze.gov.sg/haze-update/past-24-hour-psi-reading.aspx")
+f = urllib.urlopen("http://www.haze.gov.sg/haze-updates/psi-readings-over-the-last-24-hours")
 psihtml = f.read()
 
 # find start of 24 hour PSI table
