@@ -41,7 +41,7 @@ if dtnow < dt_nxtCheck:
 	exit(0)
 
 
-f = urllib.urlopen("http://www.haze.gov.sg/haze-update/past-24-hour-psi-reading.aspx")
+f = urllib.urlopen("http://www.haze.gov.sg/haze-updates/psi-readings-over-the-last-24-hours")
 psihtml = f.read()
 
 #find start of PSI reading table
