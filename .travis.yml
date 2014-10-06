@@ -12,5 +12,6 @@ before_script:
 install:
   - "pip install pymongo"
   - "pip install mongomock"
+  - "pip install beautifulsoup4"
 #command to run tests
 script: nosetests psi_tests.py
