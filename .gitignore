@@ -1,4 +1,7 @@
 *.py[cod]
+analyticstracking.php
+auth.txt*
+fab5.html
 
 # C extensions
 *.so
