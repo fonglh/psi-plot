@@ -41,6 +41,10 @@ def should_poll_nea(collection):
 	# it is now later than the time NEA's site should be checked
 	return datetime.now(tz=GMT8()) > dt_nxt_check
 
+def get_psi_page():
+	f = urllib.urlopen("http://www.haze.gov.sg/haze-updates/psi-readings-over-the-last-24-hours")
+	return f.read()
+
 
 if __name__ == '__main__':
 	currdt = datetime.now(tz=GMT8())	# this datetime var will be used for data insertion
@@ -52,9 +56,7 @@ if __name__ == '__main__':
 	if not should_poll_nea(collection):
 		exit(0)	
 
-
-	f = urllib.urlopen("http://www.haze.gov.sg/haze-updates/psi-readings-over-the-last-24-hours")
-	psihtml = f.read()
+	psihtml = get_psi_page()
 
 	#find start of PSI reading table
 	start_psi = psihtml.find("<h1>3-hr PSI Readings from 1am to 12am on")

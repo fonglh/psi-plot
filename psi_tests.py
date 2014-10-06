@@ -41,3 +41,9 @@ class Psi3Hour(unittest.TestCase):
 
 		result = getpsi.should_poll_nea(collection)
 		self.assertIs(result, False)
+
+	def test_get_psi_page(self):
+		psihtml = getpsi.get_psi_page()
+		self.assertIn('3-hr PSI Readings from 1am to 12am on', psihtml)
+		self.assertIn('24-hr PSI Readings from 1am to 12am on', psihtml)
+		
