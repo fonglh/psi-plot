@@ -1,6 +1,11 @@
 language: python
 python:
   - "2.7"
+services:
+  - mongodb
+before_script:
+  - sleep 10
+  - mongo psi_db --eval 'db.addUser("psiuser", "aNqL6bA5");'
 #commands to install dependencies
 install:
   - "pip install pymongo"
