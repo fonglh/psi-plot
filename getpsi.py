@@ -16,18 +16,28 @@ class GMT8(tzinfo):
 	def tzname(self,dt):
 		return "GMT +8"
 
+# return a collection
+def db_init(db_name, collection_name):
+	#get database
+	client = MongoClient()
+	db = client[db_name]
+	try:
+		db.authenticate("psiuser", "aNqL6bA5")
+	except PyMongoError:
+		return None
+	return db[collection_name]
+
+def should_poll_nea(collection):
+	cursor = collection.find().sort('timestamp', pymongo.DESCENDING).limit(1)
+	psi3hr_last = cursor[0]['timestamp']
+
+	return psi3hr_last
+
 if __name__ == '__main__':
 	currdt = datetime.now(tz=GMT8())	# this datetime var will be used for data insertion
 	dtnow = datetime.now(tz=GMT8())		# time at which the script is run
 
-	#get database
-	client = MongoClient()
-	db = client.psi_db
-	try:
-		db.authenticate("psiuser", "aNqL6bA5")
-	except PyMongoError:
-		pass
-	collection = db.psi_readings
+	collection = db_init('psi_db', 'psi_readings')
 
 	# check if the latest data already exists
 	cursor = collection.find().sort( 'timestamp', pymongo.DESCENDING ).limit(1)
