@@ -27,11 +27,19 @@ def db_init(db_name, collection_name):
 		return None
 	return db[collection_name]
 
+def dt_to_unixtime(dt):
+	return int(time.mktime(dt.timetuple()))
+
 def should_poll_nea(collection):
 	cursor = collection.find().sort('timestamp', pymongo.DESCENDING).limit(1)
 	psi3hr_last = cursor[0]['timestamp']
 
-	return psi3hr_last
+	#convert unix timestamp to datetime and add an hour to figure out when the next check should be
+	dt_nxt_check = datetime.fromtimestamp(psi3hr_last, tz=GMT8()) + timedelta(hours=1)
+
+	# it is now later than the time NEA's site should be checked
+	return datetime.now(tz=GMT8()) > dt_nxt_check
+
 
 if __name__ == '__main__':
 	currdt = datetime.now(tz=GMT8())	# this datetime var will be used for data insertion
