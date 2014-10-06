@@ -5,6 +5,8 @@ services:
   - mongodb
 before_script:
   - sleep 10
+  - echo 'Asia/Singapore' | sudo tee /etc/timezone
+  - sudo dpkg-reconfigure --frontend noninteractive tzdata
   - mongo psi_db --eval 'db.addUser("psiuser", "aNqL6bA5");'
 #commands to install dependencies
 install:
