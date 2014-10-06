@@ -30,6 +30,7 @@ def db_init(db_name, collection_name):
 def dt_to_unixtime(dt):
 	return int(time.mktime(dt.timetuple()))
 
+# Check if it has been an hour since the latest data point
 def should_poll_nea(collection):
 	cursor = collection.find().sort('timestamp', pymongo.DESCENDING).limit(1)
 	psi3hr_last = cursor[0]['timestamp']
@@ -47,17 +48,9 @@ if __name__ == '__main__':
 
 	collection = db_init('psi_db', 'psi_readings')
 
-	# check if the latest data already exists
-	cursor = collection.find().sort( 'timestamp', pymongo.DESCENDING ).limit(1)
-
-	# figure out when to check the website again, should be at least 1 hour from the last reading
-	psi3hr_last = cursor[0][ 'timestamp' ]
-	dt_psi3hr_last = datetime.fromtimestamp( psi3hr_last, tz=GMT8() )
-	dt_nxtCheck = dt_psi3hr_last + timedelta( hours=1 )
-
 	# not time to check yet
-	if dtnow < dt_nxtCheck:
-		exit(0)
+	if not should_poll_nea(collection):
+		exit(0)	
 
 
 	f = urllib.urlopen("http://www.haze.gov.sg/haze-updates/psi-readings-over-the-last-24-hours")
