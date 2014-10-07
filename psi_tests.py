@@ -23,6 +23,10 @@ class DatabaseTests(unittest.TestCase):
 		self.assertIsNone(collection)
 
 class Psi3Hour(unittest.TestCase):
+	def setUp(self):
+		f = open('test_data.html')
+		self.psi_html = f.read()
+
 	def test_should_poll_nea_yes(self):
 		collection = mongomock.Connection().db.collection
 		# latest timestamp more than 1 hour ago
@@ -81,3 +85,47 @@ class Psi3Hour(unittest.TestCase):
 
 		self.assertEqual(expected, result)
 
+	def test_get_td_3hour_table(self):
+		html = getpsi.substr_html(self.psi_html, '3-hr PSI Readings', '</table>')
+		result = getpsi.get_td(html)
+		expected = [139, 134, 122, 105, 90, 89, 93, 91, 83, 73, 68, 66,
+					67, 70, 75, 80, 83, 80, 75, 68, 64, 63]
+
+		self.assertEqual(result, expected)
+
+	def test_extract_psi_number_bold(self):
+		input_str = """<td align="center">
+<strong style="font-size:14px;">63</strong>
+</td>"""
+		result = getpsi.extract_psi_number(input_str)
+
+		self.assertEqual(result, 63)
+		
+	def test_extract_psi_number_normal(self):
+		input_str = """<td align="center">
+                    80
+                </td>"""
+		result = getpsi.extract_psi_number(input_str)
+
+		self.assertEqual(result, 80)
+		
+	def test_extract_psi_number_dash(self):
+		input_str = """<td align="center">
+                    -
+                </td>"""
+		result = getpsi.extract_psi_number(input_str)
+
+		self.assertIsNone(result)
+		
+	def test_extract_psi_number_rubbish(self):
+		input_str = """<td align="center">
+                   abcdefg 
+                </td>"""
+		result = getpsi.extract_psi_number(input_str)
+
+		self.assertIsNone(result)
+		
+		
+		
+		
+		

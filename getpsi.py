@@ -63,6 +63,24 @@ def substr_html(html, start_str, end_str):
 
 	return html[:end_pos + len(end_str)]
 
+# Given HTML from <table> to </table>, extract PSI values from the <td> data
+def get_td(table_html):
+	soup = BeautifulSoup(table_html)
+	# the time headers all have a width 0f 7%
+	td_list = soup.findAll('td', attrs={'width': lambda x: x != '7%'}) 	
+	td_list = [extract_psi_number(str(block)) for block in td_list]
+	# after PSI number extraction, some td blocks returned None
+	td_list = [elem for elem in td_list if elem is not None]
+	return td_list
+
+# Extract the number from a <td>..</td> HTML block
+# return '-' or invalid block as None
+def extract_psi_number(input_str):
+	extracted_data = re.findall(r'[\s>]([0-9-]{1,3})[\s<]', input_str)
+	if not extracted_data or not extracted_data[0].isdigit():
+		return None
+	else:
+		return int(extracted_data[0])
 
 if __name__ == '__main__':
 	currdt = datetime.now(tz=GMT8())	# this datetime var will be used for data insertion
