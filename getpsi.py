@@ -101,19 +101,13 @@ if __name__ == '__main__':
 	if day != dtnow.day:
 		exit(0)
 
+	psihtml_3hr = substr_html(psihtml, '3-hr PSI Readings', '</table')
 
-	# extract table of PSI readings
-	start_psi = psihtml.find("<strong>3-hr PSI</strong>")
-	end_psi = psihtml.find("</table>", start_psi)
-	psihtml = psihtml[start_psi:end_psi]
+	#get PSI values
+	psi_readings = get_td(psihtml_3hr)
 
-	#get PSI values, including the blank ones
-	psi_readings = re.findall(r'[\s>]([0-9-]{1,3})[\s<]', psihtml)
-
-
-	# psi_readings is in the format [ 180, 230, 123, '-', '-' ]
+	# psi_readings is in the format [ 180, 230, 123, ... ]
 	# each number is an hourly psi reading, starting from 1am
-	# unavailable readings are repsesented by a '-'
 	# iterate through this array insert hourly data into the database
 
 	# use today's date, set hour, min, sec etc to 0
@@ -121,11 +115,10 @@ if __name__ == '__main__':
 	datadt = currdt.replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=GMT8())
 	delta = timedelta(hours=1)
 	for reading in psi_readings:
-		if reading.isdigit():
-			datadt += delta
-			#only insert data if the timestamp is before the time now, there CAN'T be future data!!!
-			if datadt < dtnow:		
-				ts = int(time.mktime(datadt.timetuple()))
-				entry = { "timestamp": ts, "psi": reading }
-				collection.update( { "timestamp": ts}, entry, upsert=True )
-				print datadt, ts, int(reading)
+		datadt += delta
+		#only insert data if the timestamp is before the time now, there CAN'T be future data!!!
+		if datadt < dtnow:		
+			ts = int(time.mktime(datadt.timetuple()))
+			entry = { "timestamp": ts, "psi": reading }
+			collection.update( { "timestamp": ts}, entry, upsert=True )
+			print datadt, ts, int(reading)
