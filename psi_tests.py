@@ -88,8 +88,8 @@ class Psi3Hour(unittest.TestCase):
 	def test_get_td_3hour_table(self):
 		html = getpsi.substr_html(self.psi_html, '3-hr PSI Readings', '</table>')
 		result = getpsi.get_td(html)
-		expected = [139, 134, 122, 105, 90, 89, 93, 91, 83, 73, 68, 66,
-					67, 70, 75, 80, 83, 80, 75, 68, 64, 63]
+		expected = [68, 70, 73, 76, 78, 78, 78, 77, 76, 72, 71, 71,
+					74, 77, 82, 87, 94, 102, 105, 107, 107, 104, 93, 82]
 
 		self.assertEqual(result, expected)
 
