@@ -1,5 +1,17 @@
 language: python
 python:
   - "2.7"
+services:
+  - mongodb
+before_script:
+  - sleep 5 
+  - echo 'Asia/Singapore' | sudo tee /etc/timezone
+  - sudo dpkg-reconfigure --frontend noninteractive tzdata
+  - mongo psi_db --eval 'db.addUser("psiuser", "aNqL6bA5");'
+#commands to install dependencies
+install:
+  - "pip install pymongo"
+  - "pip install mongomock"
+  - "pip install beautifulsoup4"
 #command to run tests
 script: nosetests psi_tests.py
