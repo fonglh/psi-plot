@@ -52,29 +52,29 @@ class Psi3Hour(unittest.TestCase):
 		self.assertIn('3-hr PSI Readings from 1am to 12am on', psihtml)
 		self.assertIn('24-hr PSI Readings from 1am to 12am on', psihtml)
 
-	def test_parse_day_from_html_1(self):
+	def test_datetime_from_html_1(self):
 		# test single digit day
 		psihtml = """abcde<h1>3-hr PSI Readings from 1am to 12am on
                         06 Oct 2014</h1>"""
-		result = getpsi.parse_day_from_html(psihtml, '3-hr PSI Readings from 1am to 12am on')
+		result = getpsi.datetime_from_html(psihtml, '3-hr PSI Readings from 1am to 12am on')
 
-		self.assertEqual(result, 6)
+		self.assertEqual(result, datetime(2014, 10, 6, tzinfo=GMT8()))
 
-	def test_parse_day_from_html_2(self):
+	def test_datetime_from_html_2(self):
 		# test double digit day
 		psihtml = """abc<h1>3-hr PSI Readings from 1am to 12am on
                         23 Oct 2014</h1>"""
-		result = getpsi.parse_day_from_html(psihtml, '3-hr PSI Readings from 1am to 12am on')
+		result = getpsi.datetime_from_html(psihtml, '3-hr PSI Readings from 1am to 12am on')
 
-		self.assertEqual(result, 23)
+		self.assertEqual(result, datetime(2014, 10, 23, tzinfo=GMT8()))
 
-	def test_parse_day_from_html_3(self):
+	def test_datetime_from_html_3(self):
 		# test double digit day, with 24-hr table
 		psihtml = """abc<h1 style="display:inline-block">24-hr PSI Readings from 1am to 12am on
-                        23 Oct 2014</h1>"""
-		result = getpsi.parse_day_from_html(psihtml, '24-hr PSI Readings from 1am to 12am on')
+                        31 Aug 2014</h1>"""
+		result = getpsi.datetime_from_html(psihtml, '24-hr PSI Readings from 1am to 12am on')
 
-		self.assertEqual(result, 23)
+		self.assertEqual(result, datetime(2014, 8, 31, tzinfo=GMT8()))
 
 	def test_substr_html(self):
 		html = """abc<h1 style="display:inline-block">24-hr PSI Readings from 1am to 12am on
@@ -124,8 +124,4 @@ class Psi3Hour(unittest.TestCase):
 		result = getpsi.extract_psi_number(input_str)
 
 		self.assertIsNone(result)
-		
-		
-		
-		
-		
+

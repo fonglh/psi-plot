@@ -48,12 +48,20 @@ def get_psi_page():
 
 # Get the day on the PSI table's heading
 # table_heading_str is the string which indicates the start of the table
-def parse_day_from_html(psihtml, table_heading_str): 
+def datetime_from_html(psihtml, table_heading_str): 
 	table_header = substr_html(psihtml, table_heading_str, '</h1>')
 
 	# dd MMM yyyy format
-	day = re.findall(r'([0-9]+) [A-Za-z]{3} \d{4}', psihtml)
-	return int(day[0])
+	date = re.findall(r'([0-9]+) ([A-Za-z]{3}) (\d{4})', psihtml)
+	# convert result from regex match to a string
+	date_str = date[0][0] + ' ' + date[0][1] + ' ' + date[0][2]
+	# create a naive datetime object (no timezone) from the string
+	parsed_date = datetime.strptime(date_str, '%d %b %Y')
+	# create an aware datetime object (with timezone)
+	result_date = datetime.now(tz=GMT8())
+	# replace the values of the aware datetime object
+	result_date = result_date.replace(parsed_date.year, parsed_date.month, parsed_date.day, 0, 0, 0, 0)
+	return result_date
 
 # Extract the portion of HTML which starts with start_str and ends with end_str
 def substr_html(html, start_str, end_str):
@@ -93,14 +101,6 @@ if __name__ == '__main__':
 		exit(0)	
 
 	psihtml = get_psi_page()
-
-	# get day on webpage
-	day = parse_day_from_html(psihtml, '3-hr PSI Readings from 1am to 12am on')
-
-	# quit as reading is not in yet
-	if day != dtnow.day:
-		exit(0)
-
 	psihtml_3hr = substr_html(psihtml, '3-hr PSI Readings', '</table')
 
 	#get PSI values
@@ -110,9 +110,9 @@ if __name__ == '__main__':
 	# each number is an hourly psi reading, starting from 1am
 	# iterate through this array insert hourly data into the database
 
-	# use today's date, set hour, min, sec etc to 0
+	# get today's date from the page
 	# in each iteration, increase time by an hour
-	datadt = currdt.replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=GMT8())
+	datadt = datetime_from_html(psihtml, '3-hr PSI Readings from 1am to 12am on')
 	delta = timedelta(hours=1)
 	for reading in psi_readings:
 		datadt += delta
