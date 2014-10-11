@@ -124,6 +124,37 @@ def structure_table_helper(output_dict, subarray, subarray_len, labels):
 			output_dict[label].append(subarray[label_num*subarray_len + i])
 		label_num += 1
 
+def insert_data(collection, input_data, dtnow, datadt):
+	delta = timedelta(hours=1)
+
+	# assume input_data is a dictionary, if not, try a list
+	# find the length of each subarray and get the labels
+	try:
+		labels = input_data.keys()
+		data_len = len(input_data[labels[0]])
+	except AttributeError:
+		labels = []
+		data_len = len(input_data)
+
+	for i in xrange(data_len):
+		datadt += delta
+		# sanity check. there CAN't be future data
+		if datadt > dtnow:
+			break
+
+		ts = int(time.mktime(datadt.timetuple()))
+
+		# this is the dictionary
+		if labels:
+			for label in labels:
+				entry = {"timestamp": ts, "region": label, "psi_24": input_data[label][i]}
+				print datadt, entry
+				collection.update( { "timestamp": ts, "region": label }, entry, upsert=True )
+		else:		#this is the simple array
+			entry = {"timestamp": ts, "psi": input_data[i]}
+			print datadt, entry
+			collection.update( { "timestamp": ts}, entry, upsert=True )
+
 
 if __name__ == '__main__':
 	dtnow = datetime.now(tz=GMT8())		# time at which the script is run
@@ -138,7 +169,7 @@ if __name__ == '__main__':
 	psihtml = get_psi_page()
 	psihtml_3hr = substr_html(psihtml, '3-hr PSI Readings', '</table>')
 
-	#get PSI values
+	#get 3 hour PSI values
 	psi_readings = get_td(psihtml_3hr)
 
 	# 24 hour PSI values
@@ -151,14 +182,8 @@ if __name__ == '__main__':
 	# iterate through this array insert hourly data into the database
 
 	# get today's date from the page
-	# in each iteration, increase time by an hour
 	datadt = datetime_from_html(psihtml, '3-hr PSI Readings from 1am to 12am on')
-	delta = timedelta(hours=1)
-	for reading in psi_readings:
-		datadt += delta
-		#only insert data if the timestamp is before the time now, there CAN'T be future data!!!
-		if datadt < dtnow:		
-			ts = int(time.mktime(datadt.timetuple()))
-			entry = { "timestamp": ts, "psi": reading }
-			psi3hr_collection.update( { "timestamp": ts}, entry, upsert=True )
-			print datadt, ts, int(reading)
+	insert_data(psi3hr_collection, psi_readings, dtnow, datadt)
+
+	datadt = datetime_from_html(psihtml, '24-hr PSI Readings from 1am to 12am on')
+	insert_data(psi24hr_collection, psi24hr_structured, dtnow, datadt)
