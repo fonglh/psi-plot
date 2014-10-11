@@ -1,5 +1,6 @@
 import unittest
 import mongomock
+from nose.tools import nottest
 from datetime import datetime, tzinfo, timedelta
 import pymongo
 import getpsi
@@ -47,6 +48,7 @@ class Psi3Hour(unittest.TestCase):
 		result = getpsi.should_poll_nea(collection)
 		self.assertIs(result, False)
 
+	@nottest
 	def test_get_psi_page(self):
 		psihtml = getpsi.get_psi_page()
 		self.assertIn('3-hr PSI Readings from 1am to 12am on', psihtml)
@@ -125,6 +127,16 @@ class Psi3Hour(unittest.TestCase):
 
 		self.assertIsNone(result)
 
+	def test_structure_table_3hr(self):
+		input_arr = [68, 70, 73, 76, 78, 78, 78, 77, 76, 72, 71, 71,
+					74, 77, 82, 87, 94, 102, 105, 107, 107, 104, 93, 82]	
+		labels = []
+		expected = [68, 70, 73, 76, 78, 78, 78, 77, 76, 72, 71, 71,
+					74, 77, 82, 87, 94, 102, 105, 107, 107, 104, 93, 82]
+
+		result = getpsi.structure_table(input_arr, labels)
+		self.assertEqual(result, expected)
+
 class Psi24Hour(unittest.TestCase):
 	def setUp(self):
 		f = open('test_data.html')
@@ -136,5 +148,19 @@ class Psi24Hour(unittest.TestCase):
 		expected = [74, 72, 71, 71, 71, 71, 70, 71, 71, 72, 72, 73, 78, 75, 75, 75, 75, 74, 73, 73, 73, 73, 73, 73, 76, 75, 75, 75, 74, 73, 72, 72, 72, 72, 71, 72, 86, 82, 79, 78, 77, 77, 76, 76, 75, 75, 76, 76, 75, 72, 72, 72, 72, 71, 70, 70, 71, 70, 70, 71, 73, 74, 74, 74, 75, 75, 76, 78, 80, 81, 81, 80, 73, 74, 74, 74, 75, 76, 78, 80, 82, 83, 85, 85, 72, 73, 73, 73, 73, 74, 75, 77, 79, 80, 81, 81, 76, 76, 75, 77, 79, 82, 85, 87, 90, 91, 91, 92, 71, 72, 72, 72, 73, 74, 75, 77, 79, 79, 80, 80]
 
 		self.assertEqual(result, expected)
+		# sanity check, a full day of readings (24 hours) for 5 regions
 		self.assertEqual(len(result), 120)
+
+	def test_structure_table_24hr(self):
+		input_arr = [74, 72, 71, 71, 71, 71, 70, 71, 71, 72, 72, 73, 78, 75, 75, 75, 75, 74, 73, 73, 73, 73, 73, 73, 76, 75, 75, 75, 74, 73, 72, 72, 72, 72, 71, 72, 86, 82, 79, 78, 77, 77, 76, 76, 75, 75, 76, 76, 75, 72, 72, 72, 72, 71, 70, 70, 71, 70, 70, 71, 73, 74, 74, 74, 75, 75, 76, 78, 80, 81, 81, 80, 73, 74, 74, 74, 75, 76, 78, 80, 82, 83, 85, 85, 72, 73, 73, 73, 73, 74, 75, 77, 79, 80, 81, 81, 76, 76, 75, 77, 79, 82, 85, 87, 90, 91, 91, 92, 71, 72, 72, 72, 73, 74, 75, 77, 79, 79, 80, 80]
+		labels = ['North', 'South', 'East', 'West', 'Central']
+		expected = {'North': [],
+					'South': [],
+					'East': [],
+					'West': [],
+					'Central': []
+		}
+
+		result = getpsi.structure_table(input_arr, labels)
+		self.assertEqual(result, expected)
 
