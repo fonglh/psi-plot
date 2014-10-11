@@ -91,10 +91,41 @@ def extract_psi_number(input_str):
 		return int(extracted_data[0])
 
 # If there are no labels, return the input_arr
-# Else assume
+# Else assume the data is evenly distributed among the labels.
+# Also, there are a maximum of 12 contiuous values per label
+# For an example, see the 24 hour PSI reading table on NEA's website with region information
 def structure_table(input_arr, labels=[]):
 	if len(labels) == 0:
 		return input_arr
+
+	output = {}
+
+	# init output dictionary with empty lists
+	for label in labels:
+		output[label] = []
+
+	# 12 hours for each half of the data
+	first_half = input_arr[:12*len(labels)]
+	second_half = input_arr[12*len(labels):]
+
+	subarray1_len = len(first_half)/len(labels)
+	subarray2_len = len(second_half)/len(labels)
+
+	# populate output dict with values from the first part of the day
+	label_num = 0
+	for label in labels:
+		for i in xrange(subarray1_len):
+			output[label].append(first_half[label_num*subarray1_len + i])
+		label_num += 1
+
+	label_num = 0
+	for label in labels:
+		for i in xrange(subarray2_len):
+			output[label].append(second_half[label_num*subarray2_len + i])
+		label_num += 1
+
+	return output
+
 
 if __name__ == '__main__':
 	dtnow = datetime.now(tz=GMT8())		# time at which the script is run
