@@ -167,22 +167,6 @@
 
 			});
 
-			//update last PM2.5 average value
-			$.getJSON('psijson.php?query=pm25-lastavg&callback=?', function( data ) {
-				pm25aqi = AQIPM25( data[1] );
-				$('#pm25-aqi').html( pm25aqi );
-				$('#pm25-descriptor').html( AQICategory( pm25aqi ) ); 
-				setIndexColor( '#pm25-display', pm25aqi );
-
-				//set tool tip
-				$('#pm25-display').tooltip({ 
-												title: "Avg: " + data[1] + " (&micro;g/m<sup>3</sup>)",
-												html: true,
-												placement: 'bottom'
-										});
-
-			});
-		
 			function createPSIChart() {
 				psichart = new Highcharts.StockChart({
 					chart: {
@@ -388,18 +372,6 @@
 							$('#pm25-update-time').html( 'At ' + pm25_update.format('ga \\o\\n d M Y') );
 						}
 					});
-
-					//update last PM2.5 average value
-					$.getJSON('psijson.php?query=pm25-lastavg&callback=?', function( data ) {
-						pm25aqi = AQIPM25( data[1] );
-						$('#pm25-aqi').html( pm25aqi );
-						setIndexColor( '#pm25-display', pm25aqi );
-						$('#pm25-descriptor').html( AQICategory( pm25aqi ) );
-
-
-						//update tooltip
-						$('#pm25-display').attr('title', "Avg: " + data[1] + " (&micro;g/m<sup>3</sup>)").tooltip('fixTitle');
-					});
 				}
 			}
 			
@@ -494,16 +466,16 @@
 				<!-- PM2.5 data -->
 				<div class="col-lg-6">
 					<div class="row">
-						<h4 class="text-center"><strong>24 hour AQI (based on PM2.5)</strong></h4>
+						<h4 class="text-center"><strong>24 hour PSI</strong></h4>
 					</div>
 					<div class="row">
-						<div class="col-lg-8 col-lg-offset-2" id="pm25-display">
-							<h1 class="reading" id="pm25-aqi"></h1>
-							<h4 class="text-center" id="pm25-descriptor"></h4>
+						<div class="col-lg-8 col-lg-offset-2" id="psi24hr-display">
+							<h1 class="reading" id="psi24hr"></h1>
+							<h4 class="text-center" id="psi24hr-descriptor"></h4>
 						</div>
 					</div>
 					<div class="row">
-						<p class="update-time" id="pm25-update-time"></p>
+						<p class="update-time" id="psi24hr-update-time"></p>
 						<br/>
 					</div>
 				</div>
@@ -511,13 +483,12 @@
 
 			<div class="row">
 				<button type="button" class="btn-lg btn-info col-lg-4 col-lg-offset-4" data-toggle="collapse" data-target="#highcharts" id="chart-toggle">
-  					Hide Charts
+  					Hide Chart
 				</button>
 			</div>
 			<!-- graphs --> 
 			<div class="row collapse in" id="highcharts">
-				<div class="col-lg-6 highcharts" id="psi-container" style="height:400px;"></div>
-				<div class="col-lg-6 highcharts" id="pm25-container" style="height:400px;"></div>
+				<div class="col-lg-6 col-lg-offset-3 highcharts" id="psi-container" style="height:400px;"></div>
 			</div>
 			
 		</div>
