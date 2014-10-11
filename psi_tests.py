@@ -125,3 +125,16 @@ class Psi3Hour(unittest.TestCase):
 
 		self.assertIsNone(result)
 
+class Psi24Hour(unittest.TestCase):
+	def setUp(self):
+		f = open('test_data.html')
+		self.psi_html = f.read()
+
+	def test_get_td_24hour_table(self):
+		html = getpsi.substr_html(self.psi_html, '24-hr PSI Readings', '</table>')
+		result = getpsi.get_td(html)
+		expected = [74, 72, 71, 71, 71, 71, 70, 71, 71, 72, 72, 73, 78, 75, 75, 75, 75, 74, 73, 73, 73, 73, 73, 73, 76, 75, 75, 75, 74, 73, 72, 72, 72, 72, 71, 72, 86, 82, 79, 78, 77, 77, 76, 76, 75, 75, 76, 76, 75, 72, 72, 72, 72, 71, 70, 70, 71, 70, 70, 71, 73, 74, 74, 74, 75, 75, 76, 78, 80, 81, 81, 80, 73, 74, 74, 74, 75, 76, 78, 80, 82, 83, 85, 85, 72, 73, 73, 73, 73, 74, 75, 77, 79, 80, 81, 81, 76, 76, 75, 77, 79, 82, 85, 87, 90, 91, 91, 92, 71, 72, 72, 72, 73, 74, 75, 77, 79, 79, 80, 80]
+
+		self.assertEqual(result, expected)
+		self.assertEqual(len(result), 120)
+
