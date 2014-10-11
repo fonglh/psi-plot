@@ -111,20 +111,18 @@ def structure_table(input_arr, labels=[]):
 	subarray1_len = len(first_half)/len(labels)
 	subarray2_len = len(second_half)/len(labels)
 
-	# populate output dict with values from the first part of the day
-	label_num = 0
-	for label in labels:
-		for i in xrange(subarray1_len):
-			output[label].append(first_half[label_num*subarray1_len + i])
-		label_num += 1
-
-	label_num = 0
-	for label in labels:
-		for i in xrange(subarray2_len):
-			output[label].append(second_half[label_num*subarray2_len + i])
-		label_num += 1
+	# no need return value as dictionaries are changed in the function (like pass by ref in C++)
+	structure_table_helper(output, first_half, subarray1_len, labels)
+	structure_table_helper(output, second_half, subarray2_len, labels)
 
 	return output
+
+def structure_table_helper(output_dict, subarray, subarray_len, labels):
+	label_num = 0
+	for label in labels:
+		for i in xrange(subarray_len):
+			output_dict[label].append(subarray[label_num*subarray_len + i])
+		label_num += 1
 
 
 if __name__ == '__main__':
@@ -138,10 +136,15 @@ if __name__ == '__main__':
 		exit(0)	
 
 	psihtml = get_psi_page()
-	psihtml_3hr = substr_html(psihtml, '3-hr PSI Readings', '</table')
+	psihtml_3hr = substr_html(psihtml, '3-hr PSI Readings', '</table>')
 
 	#get PSI values
 	psi_readings = get_td(psihtml_3hr)
+
+	# 24 hour PSI values
+	psihtml_24hr = substr_html(psihtml, '24-hr PSI Readings', '</table>')
+	psi24hr_readings = get_td(psihtml_24hr)
+	psi24hr_structured = structure_table(psi24hr_readings, ['North', 'South', 'East', 'West', 'Central'])
 
 	# psi_readings is in the format [ 180, 230, 123, ... ]
 	# each number is an hourly psi reading, starting from 1am
