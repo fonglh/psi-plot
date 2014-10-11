@@ -34,10 +34,10 @@ def dt_to_unixtime(dt):
 # Check if it has been an hour since the latest data point
 def should_poll_nea(collection):
 	cursor = collection.find().sort('timestamp', pymongo.DESCENDING).limit(1)
-	psi3hr_last = cursor[0]['timestamp']
+	last_timestamp = cursor[0]['timestamp']
 
 	#convert unix timestamp to datetime and add an hour to figure out when the next check should be
-	dt_nxt_check = datetime.fromtimestamp(psi3hr_last, tz=GMT8()) + timedelta(hours=1)
+	dt_nxt_check = datetime.fromtimestamp(last_timestamp, tz=GMT8()) + timedelta(hours=1)
 
 	# it is now later than the time NEA's site should be checked
 	return datetime.now(tz=GMT8()) > dt_nxt_check
@@ -91,13 +91,12 @@ def extract_psi_number(input_str):
 		return int(extracted_data[0])
 
 if __name__ == '__main__':
-	currdt = datetime.now(tz=GMT8())	# this datetime var will be used for data insertion
 	dtnow = datetime.now(tz=GMT8())		# time at which the script is run
 
-	collection = db_init('psi_db', 'psi_readings')
+	psi3hr_collection = db_init('psi_db', 'psi_readings')
 
 	# not time to check yet
-	if not should_poll_nea(collection):
+	if not should_poll_nea(psi3hr_collection):
 		exit(0)	
 
 	psihtml = get_psi_page()
@@ -120,5 +119,5 @@ if __name__ == '__main__':
 		if datadt < dtnow:		
 			ts = int(time.mktime(datadt.timetuple()))
 			entry = { "timestamp": ts, "psi": reading }
-			collection.update( { "timestamp": ts}, entry, upsert=True )
+			psi3hr_collection.update( { "timestamp": ts}, entry, upsert=True )
 			print datadt, ts, int(reading)
