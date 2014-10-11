@@ -97,7 +97,7 @@ if __name__ == '__main__':
 	psi24hr_collection = db_init('psi_db', 'psi_24hr_pm25')
 
 	# not time to check yet
-	if not should_poll_nea(psi3hr_collection) and not should_poll_nea(psi_24hr_pm25):
+	if not should_poll_nea(psi3hr_collection) and not should_poll_nea(psi24hr_collection):
 		exit(0)	
 
 	psihtml = get_psi_page()
