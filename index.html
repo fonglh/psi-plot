@@ -181,8 +181,6 @@
 												placement: 'bottom'
 										});
 
-				//set overlay opacity from AQI value
-				$('#overlay').css( "opacity", getOpacity(pm25aqi) );
 			});
 		
 			function createPSIChart() {
@@ -294,6 +292,9 @@
 				setIndexColor( '#psi-display', psi3_last[1] );
 				$('#psi-descriptor').html( getPSIDescriptor(psi3_last[1]) );
 
+				//set overlay opacity from PSI value
+				$('#overlay').css( "opacity", getOpacity(psi3_last) );
+
 				//initialize 3 hour PSI update time
 				var psi3_update = new Date( psi3_last[0] );
 				$('#psi3hr-update-time').html( 'At ' + psi3_update.format('ga \\o\\n d M Y') );
@@ -342,6 +343,9 @@
 							//update PSI update time field
 							var psi3_update = new Date( data[0] );
 							$('#psi3hr-update-time').html( 'At ' + psi3_update.format('ga \\o\\n d M Y') );
+
+							//update overlay opacity using 3 hour PSI
+							$('#overlay').css( "opacity", getOpacity(newpsi) ); 
 						}
 					});
 				}
@@ -392,8 +396,6 @@
 						setIndexColor( '#pm25-display', pm25aqi );
 						$('#pm25-descriptor').html( AQICategory( pm25aqi ) );
 
-						//update overlay opacity using AQI
-						$('#overlay').css( "opacity", getOpacity(pm25aqi) ); 
 
 						//update tooltip
 						$('#pm25-display').attr('title', "Avg: " + data[1] + " (&micro;g/m<sup>3</sup>)").tooltip('fixTitle');
