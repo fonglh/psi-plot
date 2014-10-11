@@ -29,7 +29,6 @@
 				psi_ids = [ 'psi24hr', 'psi3hr' ];
 
 			var psichart;
-			var pm25chart;
 
 			$.each( psi_names, function(i, name) {
 				$.getJSON('psijson.php?query='+psijson_call[i] + '&callback=?', function( data ) {
@@ -48,123 +47,6 @@
 						createPSIChart();
 					}
 				});
-			});
-
-			$.getJSON('psijson.php?query=pm25-all&callback=?', function( data ) {
-				pm25chart = new Highcharts.StockChart({
-					chart: {
-						renderTo: 'pm25-container',
-						events: {
-							//set up updating of the pm25 chart every min
-							load: function() {
-								setInterval( updatePM25, 60000 );
-							}
-						}
-					},
-					rangeSelector: {
-						selected: 1
-					},
-
-					legend: {
-						enabled: true,
-						align: 'center',
-						verticalAlign: 'bottom',
-						borderWidth: 2,
-						itemMarginBottom: 10,
-					},
-
-					xAxis: {
-						ordinal: false
-					},
-
-					yAxis: {
-						title: {
-							text: 'Concentration (&micro;g/m<sup>3</sup>)',
-							useHTML: true
-						},
-
-						plotBands: [
-						{
-							from: 0,
-							to: 12,
-							color: 'rgba(0, 228, 0, 0.7)',
-							label: { text: 'Good' }
-						},
-						{
-							from: 12.1,
-							to: 35.4,
-							color: 'rgba(255, 255, 0, 0.7)',
-							label: { text: 'Moderate' }
-						},
-						{
-							from: 35.5,
-							to: 55.4,
-							color: 'rgba(255, 126, 0, 0.7)',
-							label: { text: 'Unhealthy (Sensitive Groups)' }
-						},
-						{
-							from: 55.5,
-							to: 150.4,
-							color: 'rgba(255, 0, 0, 0.7)',
-							label: { text: 'Unhealthy' }
-						},
-						{
-							from: 150.5,
-							to: 250.4,
-							color: 'rgba(153, 0, 76, 0.7)',
-							label: { text: 'Very unhealthy' }
-						},
-						{
-							from: 250.5,
-							to: 500.5,
-							color: 'rgba(126, 0, 35, 0.7)',
-							label: { text: 'Hazardous' }
-						}
-						]
-
-					},
-
-					rangeSelector: {
-						buttons: [
-						{
-							type: 'day',
-							count: 7,
-							text: '7d'
-						}, 
-						{
-							type: 'day',
-							count: 3,
-							text: '3d'
-						},
-						{
-							type: 'day',
-							count: 1,
-							text: '1d'
-						},
-						{
-							type: 'all',
-							text: 'All'
-						}
-						],
-						selected: 2
-					},
-
-					series: [
-					{
-						name: '24-hr PM2.5 Concentration',
-						id: 'pm25',
-						type: 'columnrange',
-						data: data
-					},
-					]
-				});
-
-				pm25_last = data[ data.length - 1 ];
-
-				//initialize PM2.5 update time field
-				var pm25_update = new Date( pm25_last[0] );
-				$('#pm25-update-time').html( 'At ' + pm25_update.format('ga \\o\\n d M Y') );				
-
 			});
 
 			function createPSIChart() {
@@ -349,32 +231,6 @@
 				}
 			}
 
-			function updatePM25() {
-				//timestamp of latest PM2.5 update
-				seriespm25 = pm25chart.get( 'pm25' );
-				dt_pm25 = new Date( seriespm25.xData[ seriespm25.xData.length - 1] );
-				//next check should be at least 1 hour later
-				dt_nxtCheck = new Date();
-				dt_nxtCheck.setTime( dt_pm25.getTime() + ( 60 * 60 * 1000 ) );
-
-				//datetime now
-				dt_now = new Date();
-
-				//only update if the time now is 1 hour after the latest value
-				if ( dt_now > dt_nxtCheck ) {
-					$.getJSON('psijson.php?query=pm25-last&callback=?', function( data ) {
-						seriespm25 = pm25chart.get( 'pm25' );
-						if ( data[0] > dt_pm25.getTime() ) {
-							seriespm25.addPoint( data, true, true );
-
-							//update PM2.5 update time field
-							var pm25_update = new Date( data[0] );
-							$('#pm25-update-time').html( 'At ' + pm25_update.format('ga \\o\\n d M Y') );
-						}
-					});
-				}
-			}
-			
 			// flash red when value goes up
 			function transitionUp( elementName ) {
 				transition( elementName, '#f00' );
