@@ -154,17 +154,26 @@
 				//initialize PSI display field with latest value
 				data = psiSeries[1]['data'];
 				psi3_last = data[ data.length - 1 ];
-				$('#psi3hr').html(psi3_last[1]);
-				setIndexColor( '#psi-display', psi3_last[1] );
-				$('#psi-descriptor').html( getPSIDescriptor(psi3_last[1]) );
 
-				//set overlay opacity from PSI value
-				$('#overlay').css( "opacity", getOpacity(psi3_last) );
+				refreshPSI3hrDisplay(psi3_last[1], psi3_last[0]);
+			}
 
-				//initialize 3 hour PSI update time
-				var psi3_update = new Date( psi3_last[0] );
+			function refreshPSI3hrDisplay(psi3_value, psi3_update_raw) {
+				//update PSI display field
+				$('#psi3hr').html(psi3_value);
+
+				//update PSI descriptor
+				$('#psi-descriptor').html( getPSIDescriptor(psi3_value) );
+
+				//set background color of the number display area
+				setIndexColor( '#psi-display', psi3_value );
+
+				//update time for the PSI value, as obtained from NEA
+				var psi3_update = new Date(psi3_update_raw);
 				$('#psi3hr-update-time').html( 'At ' + psi3_update.format('ga \\o\\n d M Y') );
 
+				//set overlay opacity from PSI value
+				$('#overlay').css( "opacity", getOpacity(psi3_value) );
 			}
 
 
@@ -187,12 +196,6 @@
 							newpsi = data[1];
 							series3hr.addPoint( data, true, true );
 
-							//also update PSI display field
-							$('#psi3hr').html( newpsi );
-							
-							//update PSI descriptor
-							$('#psi-descriptor').html( getPSIDescriptor( newpsi ) );
-
 							//animation effects
 							if ( newpsi > oldpsi ) {
 								transitionUp( '#psi3hr' );	
@@ -204,14 +207,7 @@
 								transitionEqual( '#psi3hr' );
 							}
 
-							setIndexColor( '#psi-display', newpsi );
-
-							//update PSI update time field
-							var psi3_update = new Date( data[0] );
-							$('#psi3hr-update-time').html( 'At ' + psi3_update.format('ga \\o\\n d M Y') );
-
-							//update overlay opacity using 3 hour PSI
-							$('#overlay').css( "opacity", getOpacity(newpsi) ); 
+							refreshPSI3hrDisplay(newpsi, data[0]);
 						}
 					});
 				}
