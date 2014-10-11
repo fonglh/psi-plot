@@ -90,6 +90,12 @@ def extract_psi_number(input_str):
 	else:
 		return int(extracted_data[0])
 
+# If there are no labels, return the input_arr
+# Else assume
+def structure_table(input_arr, labels=[]):
+	if len(labels) == 0:
+		return input_arr
+
 if __name__ == '__main__':
 	dtnow = datetime.now(tz=GMT8())		# time at which the script is run
 
