@@ -127,12 +127,12 @@ def structure_table_helper(output_dict, subarray, subarray_len, labels):
 def insert_data(collection, input_data, dtnow, datadt):
 	delta = timedelta(hours=1)
 
-	# assume input_data is a dictionary, if not, try a list
+	# check if input_data is a dictionary, if not, assume it's a list
 	# find the length of each subarray and get the labels
-	try:
+	if isinstance(input_data, dict):
 		labels = input_data.keys()
 		data_len = len(input_data[labels[0]])
-	except AttributeError:
+	else:
 		labels = []
 		data_len = len(input_data)
 
