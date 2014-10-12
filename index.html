@@ -156,6 +156,11 @@
 				psi3_last = data[ data.length - 1 ];
 
 				refreshPSI3hrDisplay(psi3_last[1], psi3_last[0]);
+
+				//24 hour data
+				data = psiSeries[0]['data'];
+				psi24_last = data[data.length-1];
+				refreshPSI24hrDisplay(psi24_last[1], psi24_last[2], psi24_last[0]);
 			}
 
 			function refreshPSI3hrDisplay(psi3_value, psi3_update_raw) {
@@ -174,6 +179,21 @@
 
 				//set overlay opacity from PSI value
 				$('#overlay').css( "opacity", getOpacity(psi3_value) );
+			}
+
+			function refreshPSI24hrDisplay(psi24_min, psi24_max, psi24_update_raw) {
+				//update PSI 24 hour display field
+				$('#psi24hr').html(psi24_min + ' - ' + psi24_max);
+
+				//update PSI descriptor based on max value
+				$('#psi24hr-descriptor').html( getPSIDescriptor(psi24_max) );
+
+				//set background color for the display area based on the max value
+				setIndexColor('#psi24hr-display', psi24_max);
+
+				//update time for the PSI value
+				var psi24_update = new Date(psi24_update_raw);
+				$('#psi24hr-update-time').html('At ' + psi24_update.format('ga \\o\\n d M Y'));
 			}
 
 
@@ -222,6 +242,21 @@
 					$.getJSON('psijson.php?query=psi24hr-last&callback=?', function( data ) {
 						if ( data[0] > dt_psi24hr.getTime() ) {
 							series24hrpsi.addPoint( data, true, true );
+							old_max_psi = series24hrpsi.yData[series24hrpsi.yData.length-1][1];
+							new_max_psi = data[2];
+
+							//animation effects
+							if (new_max_psi > old_max_psi) {
+								transitionUp('#psi24hr');
+							}
+							else if (new_max_psi < old_max_psi) {
+								transitionDown('#psi24hr');
+							}
+							else {
+								transitionEqual('#psi24hr');
+							}
+
+							refreshPSI24hrDisplay(data[1], new_max_psi, data[0]);
 						}
 					});
 				}
