@@ -1,4 +1,4 @@
-psi-plot
+Singapore PSI Plot
 ========
 
 [![Build Status](https://travis-ci.org/fonglh/psi-plot.svg?branch=master)](https://travis-ci.org/fonglh/psi-plot)
@@ -29,7 +29,7 @@ Scripts to scrape NEA PSI data and display it in a graph
   1. `sudo dpkg-reconfigure tzdata`
   1. Make the appropriate selections
 1. Clone this repository
-  1. Create a symlink to the cloned repository from the apache2 webroot folder `/var/www/html`
+  1. Create a symlink to the `website` folder from the apache2 webroot folder `/var/www/html`
 1. Restore Mongo data
   1. Make sure the database backup folder is a child of the `dump` folder
   1. Run `mongorestore` from the same level as the `dump` folder
