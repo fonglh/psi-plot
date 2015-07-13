@@ -33,6 +33,10 @@ pip install pymongo
 # Install BeautifulSoup
 apt-get install -y python-bs4
 
+# Disable Apache directory listing and Apache
+a2dismod autoindex
+service apache2 restart
+
 # Set password for Ubuntu user
 passwd ubuntu
 
