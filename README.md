@@ -23,6 +23,18 @@ Scripts to scrape NEA PSI data and display it in a graph
 1. Install BeautifulSoup
   1. `sudo apt-get install python-bs4`
 
+### The Lazy Way
+
+1. Run `deploy/provision.sh` as the root user.
+  1. A `ubuntu` user will be created and added to the sudo group
+  1. You will be prompted for a password near the end of the script
+  1. If you're not me, you probably want to change the part where the public keys are downloaded
+  1. Some user input is still necessary
+    1. Some mongo setup option
+    1. ubuntu user sudo password
+    1. Setting the timezone
+1. Continue with the [Configuration](#configuration) section
+
 ## Configuration
 
 1. Set the timezone to Singapore (because these are SG PSI readings)
@@ -33,9 +45,10 @@ Scripts to scrape NEA PSI data and display it in a graph
 1. Restore Mongo data
   1. Make sure the database backup folder is a child of the `dump` folder
   1. Run `mongorestore` from the same level as the `dump` folder
-1. Create a user for the `psi_db` database
+1. Create a user for the `psi_db` database (not necessary if the dump folder has the user data)
   1. From the mongo client, `use psi_db`
   1. `db.createUser({user: "psiuser", pwd: "somepass", roles: [{role: "readWrite", db: "psi_db"}]})`
+1. Reboot the server so the PHP Mongo setting will take effect
 
 ### Backing up the data
 

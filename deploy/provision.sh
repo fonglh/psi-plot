@@ -1,6 +1,7 @@
 #!/bin/sh
 
 # Run as the root user when creating a DO server
+# Some user input is necessary
 
 # Setup a non root user
 useradd --create-home --shell /bin/bash ubuntu
@@ -31,3 +32,9 @@ pip install pymongo
 
 # Install BeautifulSoup
 apt-get install -y python-bs4
+
+# Set password for Ubuntu user
+passwd ubuntu
+
+# Configure timezone
+dpkg-reconfigure tzdata
