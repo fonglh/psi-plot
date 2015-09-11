@@ -41,6 +41,25 @@ if ( $query === 'psi3hr-all' )
 	}
 	$json = json_encode( $psi_3hr_arr );
 }
+else if ( $query === 'psi3hr-lastyear' )
+{
+	$c_readings = $db -> selectCollection( $dbname, "psi_readings" );
+
+	// get all 3 hour PSI readings
+	$cursor = $c_readings->find();
+	$cursor->sort( array('timestamp' => -1) );
+  // 365 days * 24 readings a day (might not be exactly a year if no overnight readings)
+	$cursor->limit(8760);
+
+	$psi_3hr_arr = array();
+
+	while ( $psi_reading = $cursor -> getNext() )
+	{
+		$psi_3hr_arr[] = array( floatval($psi_reading[ 'timestamp' ] . "000"), intval($psi_reading[ 'psi' ]) );
+	}
+	$psi_3hr_arr = array_reverse( $psi_3hr_arr );
+	$json = json_encode( $psi_3hr_arr );
+}
 else if ( $query === 'psi3hr-last' )
 {
 	$c_readings = $db -> selectCollection( $dbname, "psi_readings" );
@@ -91,6 +110,45 @@ else if ( $query === 'psi24hr-all' )
 		// javascript timestamps are in milliseconds so the values need to be multipled by 1000
 		$psi_24hr_arr[] = array( floatval($psi_reading[ 'timestamp' ] . "000"), intval($psi_reading[ 'min' ]), intval($psi_reading[ 'max' ]) );
 	}
+	$json = json_encode( $psi_24hr_arr );
+}
+else if ( $query === 'psi24hr-lastyear' )
+{
+	//get 24 hour PSI readings
+	$c_readings = $db -> selectCollection( $dbname, "psi_24hr_pm25" );
+	
+	$aggregate_ops = array(
+			array(
+				'$group' => array(
+					"_id" => '$timestamp',
+					"min" => array('$min'=>'$psi_24'),
+					"max" => array('$max'=>'$psi_24')
+					)
+				),
+			array(
+				'$project' => array(
+					"timestamp" => '$_id',
+					'_id' => 0,
+					"min" => 1,
+					"max" => 1,
+					)
+				),
+			array(
+				'$sort' => array(
+					'timestamp' => 1
+					)
+				)
+			);
+	
+	$psi_24hr_data = $c_readings -> aggregate( $aggregate_ops );
+	$psi_24hr_data = $psi_24hr_data[ 'result' ];
+
+	foreach ( $psi_24hr_data as &$psi_reading )
+	{
+		// javascript timestamps are in milliseconds so the values need to be multipled by 1000
+		$psi_24hr_arr[] = array( floatval($psi_reading[ 'timestamp' ] . "000"), intval($psi_reading[ 'min' ]), intval($psi_reading[ 'max' ]) );
+	}
+	$psi_24hr_arr = array_slice( $psi_24hr_arr, -8760 );
 	$json = json_encode( $psi_24hr_arr );
 }
 else if ( $query === 'psi24hr-last' )
